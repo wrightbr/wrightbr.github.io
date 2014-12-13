@@ -33,7 +33,7 @@ knit        : slidify::knit2slides
 ## Now you can verify (reproduce!) claims about margins-of-error or even design your own poll with this new Shiny app!
 
 
-Click here to go to the app:  https://pinnipedia.shinyapps.io/SampleSize
+Click here to visit app:  https://pinnipedia.shinyapps.io/SampleSize
 
 
 
