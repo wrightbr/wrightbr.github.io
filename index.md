@@ -1,0 +1,48 @@
+---
+title       : Shiny Sample Size Calculator for Proportions
+subtitle    : 
+author      : wrightbr
+job         : Coursera Data Science 9 - Developing Data Products
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+
+---
+## Opinion polls and surveys are everywhere...
+
+<img src="assets/img/Slide1.JPG" style="width: 1000px;"/>
+
+---
+## But many of these polls are unscientific...
+
+<img src="assets/img/Slide2.JPG" style="width: 1000px;"/>
+
+---
+## How to tell the difference?
+
+- A quick way to determine if a reported poll is scientifically valid is to look for a statment like this:
+
+<img src="assets/img/Slide3.JPG" style="width: 1000px;"/>
+
+- [Read more on opinion polls at Wikipeida](http://en.wikipedia.org/wiki/Opinion_poll)
+
+---
+## Now you can verify (reproduce!) claims about margins-of-error or even design your own poll with this new Shiny app!
+
+
+Click here to go to the app:  https://pinnipedia.shinyapps.io/SampleSize
+
+
+
+
+
+
+
+
+
+
+
+
