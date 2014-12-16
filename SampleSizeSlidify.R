@@ -22,6 +22,9 @@ author("SampleSizeDeck")
 # step 4. generate deck
 slidify("C:/Users/Bryan/Desktop/Coursera/Course 9 - data products/Project/SampleSize Slidify/SampleSizeDeck/index.Rmd")
 
+#library(knitr)
+browseURL("SampleSizeDeck/index.html")
+
 # step 5. publish deck
 
 #Publishing to Github is as easy as running publish from inside the slide directory. You need to have git installed on your system, create an empty github repo and ssh access set up for github.
