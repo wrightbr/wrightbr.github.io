@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oregon Coast Haulout Location Quiz</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #0069d9;
+            --correct-color: #dff0d8;
+            --incorrect-color: #f2dede;
+            --close-color: #fcf8e3;
+            --background-color: #f0f0f0;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            line-height: 1.4; /* Slightly reduced line height */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px; /* Reduced padding */
+            background-color: var(--background-color);
+            font-size: 16px; /* Reduced base font size */
+            color: var(--text-color);
+        }
+
+        h1 {
+            font-size: 1.8rem; /* Reduced from 2.2rem */
+            margin: 10px 0; /* Reduced margin */
+        }
+
+        p {
+            margin: 8px 0; /* Reduced margin */
+            font-size: 1rem; /* Reduced from 1.1rem */
+        }
+
+        .container {
+            margin-top: 15px; /* Reduced margin */
+            background-color: #f9f9f9;
+            padding: 20px; /* Reduced padding */
+            border-radius: 10px; /* Slightly reduced */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow */
+        }
+
+        .form-group {
+            margin: 10px 0; /* Reduced margin */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px; /* Reduced margin */
+            font-weight: bold;
+            font-size: 1rem; /* Reduced from 1.2rem */
+        }
+
+        input {
+            margin: 4px; /* Reduced margin */
+            padding: 8px; /* Reduced padding */
+            width: 90%;
+            max-width: 350px; /* Slightly reduced */
+            border: 1px solid #ccc;
+            border-radius: 5px; /* Slightly reduced */
+            font-size: 1rem; /* Reduced from 1.1rem */
+        }
+
+        button {
+            padding: 8px 16px; /* Reduced padding */
+            cursor: pointer;
+            margin: 6px 4px; /* Reduced margin */
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px; /* Slightly reduced */
+            transition: background-color 0.3s;
+            font-size: 1rem; /* Reduced from 1.1rem */
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px; /* Slightly reduced */
+            margin-bottom: 10px; /* Reduced margin */
+            max-height: 1200px; /* Kept the same */
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Kept the same */
+        }
+
+        #result {
+            margin: 10px 0; /* Reduced margin */
+            padding: 10px; /* Reduced padding */
+            border-radius: 5px; /* Slightly reduced */
+            font-weight: bold;
+            font-size: 1rem; /* Reduced from 1.2rem */
+        }
+
+        .correct {
+            background-color: var(--correct-color);
+            color: #3c763d;
+        }
+
+        .incorrect {
+            background-color: var(--incorrect-color);
+            color: #a94442;
+        }
+
+        .close {
+            background-color: var(--close-color);
+            color: #8a6d3b;
+        }
+
+        .progress {
+            margin: 10px 0; /* Reduced margin */
+            font-size: 0.9rem; /* Reduced from 1rem */
+            font-weight: bold;
+        }
+
+        #location-list {
+            margin-top: 15px; /* Reduced margin */
+            padding: 10px; /* Reduced padding */
+            background-color: var(--background-color);
+            border-radius: 10px; /* Slightly reduced */
+            text-align: left;
+            max-height: 180px; /* Slightly reduced */
+            overflow-y: auto;
+            display: none;
+        }
+
+        .location-chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px; /* Reduced gap */
+        }
+
+        .location-chip {
+            background-color: #e0e0e0;
+            padding: 6px 10px; /* Reduced padding */
+            border-radius: 14px; /* Slightly reduced */
+            font-size: 0.9rem; /* Reduced from 1rem */
+            margin: 2px; /* Reduced margin */
+            display: inline-block;
+        }
+
+        .toggle-list {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.9rem; /* Reduced from 1rem */
+            padding: 6px 12px; /* Reduced padding */
+        }
+
+        .toggle-list:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #completion-message {
+            display: none;
+            margin-top: 20px; /* Reduced margin */
+            background-color: #f9f9f9;
+            padding: 20px; /* Reduced padding */
+            border-radius: 10px; /* Slightly reduced */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow */
+        }
+
+        #completion-message h2 {
+            margin-top: 0;
+            font-size: 1.5rem; /* Reduced from 2rem */
+            color: #28a745;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .quiz-controls-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Reduced gap */
+            margin: 10px 0; /* Reduced margin */
+        }
+
+        .quiz-layout {
+            display: flex;
+            flex-direction: row;
+            gap: 20px; /* Reduced gap */
+            align-items: flex-start;
+        }
+
+        .quiz-image {
+            flex: 3;
+            min-width: 0;
+        }
+
+        .quiz-form {
+            flex: 2;
+            min-width: 0;
+        }
+
+        .score-tracker {
+            background-color: var(--background-color);
+            border-radius: 8px; /* Slightly reduced */
+            padding: 10px; /* Reduced padding */
+            margin: 10px 0; /* Reduced margin */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px; /* Reduced gap */
+            font-weight: bold;
+            font-size: 1rem; /* Reduced from 1.1rem */
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 6px; /* Reduced gap */
+        }
+
+        .score-count {
+            background-color: white;
+            border-radius: 50%;
+            width: 30px; /* Reduced size */
+            height: 30px; /* Reduced size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .correct-score .score-count {
+            border: 2px solid #28a745;
+            color: #28a745;
+        }
+
+        .close-score .score-count {
+            border: 2px solid #ffc107;
+            color: #8a6d3b;
+        }
+
+        .incorrect-score .score-count {
+            border: 2px solid #dc3545;
+            color: #a94442;
+        }
+
+        @media (max-width: 900px) {
+            .quiz-layout {
+                flex-direction: column;
+            }
+
+            .quiz-image, .quiz-form {
+                flex: 1;
+                width: 100%;
+            }
+
+            .score-tracker {
+                flex-direction: column;
+                gap: 8px; /* Reduced gap */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Oregon Coast Haulout Location Quiz</h1>
+        <p>Look at the picture and guess the haulout location!</p>
+        
+        <div id="quiz-controls">
+            <button id="start-button" onclick="startQuiz()">Start Quiz</button>
+            <p class="progress hidden" id="progress">Image <span id="current-question">0</span> of <span id="total-questions">0</span></p>
+        </div>
+        
+        <div id="quiz-area" class="hidden">
+            <div class="score-tracker" id="score-tracker">
+                <div class="score-item correct-score">
+                    <span>Correct:</span>
+                    <div class="score-count" id="correct-count">0</div>
+                </div>
+                <div class="score-item close-score">
+                    <span>Close:</span>
+                    <div class="score-count" id="close-count">0</div>
+                </div>
+                <div class="score-item incorrect-score">
+                    <span>Incorrect:</span>
+                    <div class="score-count" id="incorrect-count">0</div>
+                </div>
+            </div>
+            
+            <div class="quiz-layout">
+                <div class="quiz-image">
+                    <img id="locationImage" src="" alt="Haulout Location Image">
+                </div>
+                
+                <div class="quiz-form">
+                    <form id="answer-form" onsubmit="checkGuess(event)">
+                        <div class="form-group">
+                            <label for="guessInput">Location Name:</label>
+                            <input type="text" id="guessInput" placeholder="Enter location" required>
+                        </div>
+                        
+                        <button type="submit" id="submit-button">Submit</button>
+                        <button id="next-button" class="hidden" onclick="nextLocation()" disabled>Next</button>
+                    </form>
+                    
+                    <div id="result" aria-live="assertive"></div>
+                </div>
+            </div>
+            
+            <div class="quiz-controls-row">
+                <button id="toggle-locations" class="toggle-list" onclick="toggleLocationList()">Show/Hide Location List</button>
+            </div>
+            
+            <div id="location-list">
+                <h3>All Locations (Alphabetically Sorted):</h3>
+                <div class="location-chips" id="location-chips"></div>
+            </div>
+        </div>
+        
+        <div id="completion-message">
+            <h2>Congratulations!</h2>
+            <p>You've finished the Oregon Coast Haulout Location Quiz.</p>
+            <p>Final Score:</p>
+            <div class="score-tracker">
+                <div class="score-item correct-score">
+                    <span>Correct:</span>
+                    <div class="score-count" id="final-correct-count">0</div>
+                </div>
+                <div class="score-item close-score">
+                    <span>Close:</span>
+                    <div class="score-count" id="final-close-count">0</div>
+                </div>
+                <div class="score-item incorrect-score">
+                    <span>Incorrect:</span>
+                    <div class="score-count" id="final-incorrect-count">0</div>
+                </div>
+            </div>
+            <p>Accuracy: <span id="accuracy-percentage">0%</span></p>
+        </div>
+    </div>
+    
+    <script>
+        // JavaScript remains unchanged from the previous version
+        const locations = [
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Alsea_Bay_20240531.jpg", Name: "Alsea Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Bandon_20240529.jpg", Name: "Bandon" },
+	    { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Blacklock_Point_20240529.jpg", Name: "Blacklock Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Blanco_Reef_20240529.jpg", Name: "Blanco Reef" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Boiler_Bay_20240531.jpg", Name: "Boiler Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Camas_Powerlines_20230427.jpg", Name: "Camas Powerlines" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cape_Arago_20230905.jpg", Name: "Cape Arago" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cape_Blanco_20240529.jpg", Name: "Cape Blanco" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cape_Falcon_20240531.jpg", Name: "Cape Falcon" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cape_Foulweather_20240531.jpg", Name: "Cape Foulweather" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cape_Lookout_20240531.jpg", Name: "Cape Lookout" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cape_Perpetua_20240529.jpg", Name: "Cape Perpetua" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cascade_Head_20230905.jpg", Name: "Cascade Head" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Castle_Rock_20240529.jpg", Name: "Castle Rock" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Chinook_Baker_20210518.jpg", Name: "Baker Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Coffin_Rock_20250109.jpg", Name: "Coffin Rock" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Coos_Bay_20240529.jpg", Name: "Coos Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Cowlitz_River_Mouth_20220323.jpg", Name: "Cowlitz River Mouth" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Deer_Point_20240529.jpg", Name: "Deer Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Desdemona_Sands_20240531.jpg", Name: "Desdemona Sands" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Devils_Backbone_20240529.jpg", Name: "Devils Backbone" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/East_Mooring_Basin_20230905.jpg", Name: "East Mooring Basin" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Ecola_Point_20240531.jpg", Name: "Ecola Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Fivemile_Point_20240529.jpg", Name: "Fivemile Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Fogarty_Creek_20240531.jpg", Name: "Fogarty Creek" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Goat_Island_20240529.jpg", Name: "Goat Island" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Grays_Bay_20240531.jpg", Name: "Grays Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Green_Island_Area_20240531.jpg", Name: "Green Island Area" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Gull_Rock_20240529.jpg", Name: "Gull Rock" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/House_Rock_20240529.jpg", Name: "House Rock" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Hubbard_Mound_20240529.jpg", Name: "Hubbard Mound" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Humbug_Mountain_20240529.jpg", Name: "Humbug Mountain" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Hunters_Island_20240529.jpg", Name: "Hunters Island" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Jetty_A_20240531.jpg", Name: "Jetty A" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Mack_Reef_Crook_Point_20230905.jpg", Name: "Mack Reef Crook Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Nehalem_River_20240531.jpg", Name: "Nehalem River" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Nestucca_River_20240531.jpg", Name: "Nestucca River" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Netarts_Bay_20240531.jpg", Name: "Netarts Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Orford_Reef_20230905.jpg", Name: "Orford Reef" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Phoca_Rock_20100317.jpg", Name: "Phoca Rock" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Pillar_Welch_20210518.jpg", Name: "Three Tree Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Pirate_Cove_20240531.jpg", Name: "Pirate Cove" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Pistol_River_20240529.jpg", Name: "Pistol River" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Port_Orford_Heads_20240529.jpg", Name: "Port Orford Heads" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Puget_Wallace_20210518.jpg", Name: "Wallace Island" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Qochyax_Island_20240529.jpg", Name: "Qochyax Island" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Rainier_20240208.jpg", Name: "Rainier" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Rogue_Reef_20240529.jpg", Name: "Rogue Reef" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Rogue_River_20240529.jpg", Name: "Rogue River" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Sea_Lion_Caves_20230905.jpg", Name: "Sea Lion Caves" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Seal_Rock_20240531.jpg", Name: "Seal Rock" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Shore_Acres_20240529.jpg", Name: "Shore Acres" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Siletz_Bay_20240531.jpg", Name: "Siletz Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Siltcoos_Lake_Outlet_20240529.jpg", Name: "Siltcoos Lake Outlet" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Siuslaw_River_20240529.jpg", Name: "Siuslaw River" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/South_Jetty_20230905.jpg", Name: "South Jetty" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Strawberry_Hill_20240529.jpg", Name: "Strawberry Hill" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Tahkenitch_Lake_Outlet_20240529.jpg", Name: "Tahkenitch Lake Outlet" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Taylor_Sands_20240531.jpg", Name: "Taylor Sands" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Tenmile_Lake_Outlet_20240529.jpg", Name: "Tenmile Lake Outlet" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Three_Arch_Rocks_20230905.jpg", Name: "Three Arch Rocks" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Tillamook_Bay_20240531.jpg", Name: "Tillamook Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Tillamook_Head_20240531.jpg", Name: "Tillamook Head" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Tillamook_Head_Lighthouse_20230905.jpg", Name: "Tillamook Rock Lighthouse" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Tokatee_Klootchman_20240529.jpg", Name: "Tokatee Klootchman" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Umpqua_River_20240529.jpg", Name: "Umpqua River" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Whale_Cove_20240531.jpg", Name: "Whale Cove" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Whalehead_20240529.jpg", Name: "Whalehead" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Whiskey_Creek_20240529.jpg", Name: "Whiskey Creek" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Yaquina_Bay_20230905.jpg", Name: "Yaquina Bay" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Yaquina_Head_20240531.jpg", Name: "Yaquina Head" }
+        ];
+
+        let currentLocation;
+        let shownLocations = [];
+        let quizStarted = false;
+        let questionAnswered = false;
+        let locationListVisible = false;
+
+        let correctCount = 0;
+        let closeCount = 0;
+        let incorrectCount = 0;
+
+        function startQuiz() {
+            quizStarted = true;
+            document.getElementById("quiz-area").classList.remove("hidden");
+            document.getElementById("start-button").classList.add("hidden");
+            document.getElementById("progress").classList.remove("hidden");
+            document.getElementById("total-questions").textContent = locations.length;
+            document.getElementById("completion-message").style.display = "none";
+
+            correctCount = 0;
+            closeCount = 0;
+            incorrectCount = 0;
+            updateScoreDisplay();
+
+            shownLocations = [];
+            populateLocationList();
+            nextLocation();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById("correct-count").textContent = correctCount;
+            document.getElementById("close-count").textContent = closeCount;
+            document.getElementById("incorrect-count").textContent = incorrectCount;
+
+            document.getElementById("final-correct-count").textContent = correctCount;
+            document.getElementById("final-close-count").textContent = closeCount;
+            document.getElementById("final-incorrect-count").textContent = incorrectCount;
+
+            const totalAnswered = correctCount + closeCount + incorrectCount;
+            const accuracyPercentage = totalAnswered > 0 
+                ? Math.round((correctCount / totalAnswered) * 100) 
+                : 0;
+
+            document.getElementById("accuracy-percentage").textContent = `${accuracyPercentage}%`;
+        }
+
+        function populateLocationList() {
+            const chipContainer = document.getElementById("location-chips");
+            chipContainer.innerHTML = "";
+
+            const sortedLocations = [...locations].sort((a, b) => a.Name.localeCompare(b.Name));
+
+            sortedLocations.forEach(location => {
+                const chip = document.createElement("span");
+                chip.className = "location-chip";
+                chip.textContent = location.Name;
+                chipContainer.appendChild(chip);
+            });
+        }
+
+        function toggleLocationList() {
+            const locationList = document.getElementById("location-list");
+            locationListVisible = !locationListVisible;
+            locationList.style.display = locationListVisible ? "block" : "none";
+        }
+
+        function nextLocation() {
+            if (shownLocations.length === locations.length) {
+                endQuiz();
+                return;
+            }
+
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * locations.length);
+            } while (shownLocations.includes(randomIndex));
+
+            shownLocations.push(randomIndex);
+            currentLocation = locations[randomIndex];
+            document.getElementById("locationImage").src = currentLocation.URL;
+            document.getElementById("locationImage").alt = "Image of a haulout location";
+
+            document.getElementById("result").textContent = "";
+            document.getElementById("result").className = "";
+            document.getElementById("guessInput").value = "";
+            document.getElementById("next-button").classList.add("hidden");
+            document.getElementById("next-button").disabled = true;
+            document.getElementById("submit-button").disabled = false;
+            document.getElementById("guessInput").focus();
+
+            document.getElementById("current-question").textContent = shownLocations.length;
+            questionAnswered = false;
+        }
+
+        function levenshteinDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+
+            const matrix = [];
+            for (let i = 0; i <= b.length; i++) {
+                matrix[i] = [i];
+            }
+            for (let j = 0; j <= a.length; j++) {
+                matrix[0][j] = j;
+            }
+
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+
+            return matrix[b.length][a.length];
+        }
+
+        function checkGuess(event) {
+            event.preventDefault();
+
+            if (questionAnswered) return;
+
+            const guess = document.getElementById("guessInput").value.trim();
+            const correctAnswer = currentLocation.Name;
+            const result = document.getElementById("result");
+
+            const normalizedGuess = guess.toLowerCase().replace(/\s+/g, " ");
+            const normalizedAnswer = correctAnswer.toLowerCase().replace(/\s+/g, " ");
+
+            if (normalizedGuess === normalizedAnswer) {
+                result.textContent = `Correct! The location is ${correctAnswer}.`;
+                result.className = "correct";
+                correctCount++;
+            } else {
+                const distance = levenshteinDistance(normalizedGuess, normalizedAnswer);
+                const similarity = 1 - (distance / Math.max(normalizedGuess.length, normalizedAnswer.length));
+
+                if (similarity >= 0.75) {
+                    result.textContent = `Close! The correct location is ${correctAnswer}.`;
+                    result.className = "close";
+                    closeCount++;
+                } else {
+                    result.textContent = `Incorrect. The correct location is ${correctAnswer}.`;
+                    result.className = "incorrect";
+                    incorrectCount++;
+                }
+            }
+
+            updateScoreDisplay();
+            questionAnswered = true;
+            document.getElementById("submit-button").disabled = true;
+            document.getElementById("next-button").classList.remove("hidden");
+            document.getElementById("next-button").disabled = false;
+        }
+
+        function endQuiz() {
+            document.getElementById("quiz-area").classList.add("hidden");
+            document.getElementById("completion-message").style.display = "block";
+            updateScoreDisplay();
+        }
+
+        window.onload = function() {
+            document.getElementById("location-list").style.display = "none";
+            document.getElementById("answer-form").addEventListener("submit", checkGuess);
+        };
+    </script>
+</body>
+</html>
