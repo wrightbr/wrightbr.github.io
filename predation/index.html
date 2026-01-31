@@ -876,17 +876,6 @@
             </ol>
         </div>
 
-        <div class="info-box">
-            <h3>About Predation Events & Event Duration Bias</h3>
-            <p><strong>Scenario:</strong> Each cell represents a 1-hectare water plot observed during a 30-minute period. Pinnipeds surface with newly caught fish with probability p. Once surfaced, feeding continues across space (horizontal), time (vertical down), or both (diagonal) until the fish is consumed. <em>For simplicity, the data generating model was assumed to be Bernoulli(p), that is a one or zero, when in reality the number of fish caught per cell can be any integer value (e.g., 0, 1, 2, etc.).</em></p>
-            
-            <p style="margin-top: 10px;"><strong>Event Duration Bias:</strong> Longer events spanning multiple cells have higher detection probability than single-cell events. <strong>Unbiased estimation requires counting only event origins</strong> (blue cells), not predation paths (orange cells). Including predation paths creates positive bias.</p>
-            
-            <p style="margin-top: 15px; padding: 12px; background: #fff5f5; border-left: 4px solid #e53e3e; border-radius: 4px; color: #c53030; font-weight: 600; font-size: 0.95em;">
-                Note: This demonstration assumes perfect detection (probability of detection = 1, given a predation event occurs). In reality, detection probability is often less than 1 and may vary with event characteristics.
-            </p>
-        </div>
-
         <div class="controls">
             <div class="control-group">
                 <label for="temporalUnits">Temporal Units (Rows):</label>
@@ -927,6 +916,14 @@
         <div class="main-content">
             <div class="panel">
                 <h2>Spatio-Temporal Sampling Frame (<span id="frameSize">6 × 400</span>)</h2>
+                <div style="margin: 15px 0;">
+                    <button onclick="toggleMoreInfo()" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <span id="moreInfoIcon">▶</span> More Information
+                    </button>
+                    <div id="moreInfoContent" style="display: none; color: #4a5568; font-size: 0.9em; line-height: 1.5; margin-top: 10px; padding: 12px; background: #f7fafc; border-left: 3px solid #667eea; border-radius: 4px;">
+                        Each cell represents a 1-hectare plot observed for 30 minutes. Pinnipeds surface with fish (probability p), then feeding continues across space and/or time until consumed. The model assumes Bernoulli(p) values (0 or 1) for simplicity, though actual counts can be any integer. This demonstration also assumes perfect detection; in reality, detection probability often varies with event characteristics.
+                    </div>
+                </div>
                 <div class="legend">
                     <div class="legend-item">
                         <div class="legend-box origin"></div>
@@ -1335,6 +1332,12 @@
             const biasPercent = (bias / trueTotal * 100).toFixed(1);
             const unbiasedCoverage = simulationResults.unbiasedCoverage;
             const biasedCoverage = simulationResults.biasedCoverage;
+            
+            // General event duration bias explanation
+            insights.push({
+                type: 'info',
+                text: `<strong>Event Duration Bias:</strong> Longer events spanning multiple cells have higher detection probability than single-cell events. Unbiased estimation requires counting only event origins (blue cells), not predation paths (orange cells). Including predation paths creates positive bias.`
+            });
             
             // Bias insight
             if (Math.abs(bias) > 1) {
@@ -2208,6 +2211,20 @@
                 const val = (i / 5) * maxFreq;
                 const y = height - padding - (i / 5) * maxBarHeight;
                 ctx.fillText(Math.round(val), padding - 10, y + 5);
+            }
+        }
+
+        // Toggle More Information dropdown
+        function toggleMoreInfo() {
+            const content = document.getElementById('moreInfoContent');
+            const icon = document.getElementById('moreInfoIcon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▶';
             }
         }
 
