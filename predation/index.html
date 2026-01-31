@@ -481,21 +481,12 @@
         }
 
         .legend-box.origin {
-            background: #48bb78;
-            color: white;
-            background-image: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 2px,
-                rgba(255, 255, 255, 0.1) 2px,
-                rgba(255, 255, 255, 0.1) 4px
-            );
+            background: #E69F00;  /* Colorblind-friendly orange */
         }
 
         .legend-box.continuation {
-            background: #bee3f8;
-            color: #2c5282;
-            border: 1px dashed #4299e1;
+            background: #56B4E9;  /* Colorblind-friendly blue */
+        }
         }
 
         .legend-box.sampled {
@@ -677,25 +668,11 @@
 
         /* Enhancement #3: Patterns for Accessibility */
         .cell.origin {
-            background: #48bb78;
-            background-image: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 2px,
-                rgba(255, 255, 255, 0.1) 2px,
-                rgba(255, 255, 255, 0.1) 4px
-            );
+            background: #E69F00;  /* Colorblind-friendly orange */
         }
 
         .cell.continuation {
-            background: #90cdf4;
-            background-image: repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 3px,
-                rgba(255, 255, 255, 0.3) 3px,
-                rgba(255, 255, 255, 0.3) 6px
-            );
+            background: #56B4E9;  /* Colorblind-friendly blue */
         }
 
         /* Enhancement #6: Key Insights Panel */
@@ -862,7 +839,7 @@
             <h3>How to Use This Demo</h3>
             <ol>
                 <li><strong>Set Parameters:</strong> Choose temporal units (rows), predation probability (p), and sampling fraction</li>
-                <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (green) and predation paths (light blue)</li>
+                <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (orange) and predation paths (blue)</li>
                 <li><strong>Draw Sample:</strong> Click "Draw Sample" to randomly sample cells. Red borders show sampled cells (origins, predation paths, and empty cells)</li>
                 <li><strong>Compare Approaches:</strong> Review unbiased estimates (counting only origins) vs. biased estimates (including predation paths)</li>
                 <li><strong>View Simulation:</strong> The simulation automatically runs after drawing a sample, showing distributions from 1000+ repeated samples</li>
@@ -873,7 +850,7 @@
             <h3>About Predation Events & Event Duration Bias</h3>
             <p><strong>Scenario:</strong> Each cell represents a 1-hectare water plot observed during a 30-minute period. Pinnipeds surface with newly caught fish with probability p. Once surfaced, feeding continues across space (horizontal), time (vertical down), or both (diagonal) until the fish is consumed. <em>For simplicity, the data generating model was assumed to be Bernoulli(p), that is a one or zero, when in reality the number of fish caught per cell can be any integer value (e.g., 0, 1, 2, etc.).</em></p>
             
-            <p style="margin-top: 10px;"><strong>Event Duration Bias:</strong> Longer events spanning multiple cells have higher detection probability than single-cell events. <strong>Unbiased estimation requires counting only event origins</strong> (green cells showing "1"), not predation paths (light blue, dashed border). Including predation paths creates positive bias.</p>
+            <p style="margin-top: 10px;"><strong>Event Duration Bias:</strong> Longer events spanning multiple cells have higher detection probability than single-cell events. <strong>Unbiased estimation requires counting only event origins</strong> (orange cells), not predation paths (blue cells). Including predation paths creates positive bias.</p>
             
             <p style="margin-top: 15px; padding: 12px; background: #fff5f5; border-left: 4px solid #e53e3e; border-radius: 4px; color: #c53030; font-weight: 600; font-size: 0.95em;">
                 Note: This demonstration assumes perfect detection (probability of detection = 1, given a predation event occurs). In reality, detection probability is often less than 1 and may vary with event characteristics.
@@ -926,8 +903,7 @@
                         <span class="legend-text">Predation Origin</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-box continuation">○</div>
-                        <div class="legend-arrow" style="margin-left: 5px;"></div>
+                        <div class="legend-box continuation"></div>
                         <span class="legend-text">Predation Path</span>
                     </div>
                     <div class="legend-item">
@@ -1635,10 +1611,10 @@
                 
                 if (value > 0) {
                     cell.className = 'cell origin';
-                    cell.textContent = value; // Show the count value
+                    cell.textContent = ''; // No text, just color
                 } else if (continuationMap.has(index)) {
                     cell.className = 'cell continuation';
-                    cell.textContent = '○';
+                    cell.textContent = ''; // No text, just color
                 } else {
                     cell.className = 'cell value-0';
                     cell.textContent = '';
