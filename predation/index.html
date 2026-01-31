@@ -858,10 +858,34 @@
             font-size: 0.9em;
             line-height: 1.5;
         }
+
+        /* Header image in upper right corner */
+        .header-image {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .header-image {
+                position: static;
+                margin: 20px auto;
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <img src="image.jpg" alt="Image" class="header-image">
         <h1>Pinniped Predation Sampling Demo</h1>
         <p class="subtitle">Demonstrating event duration bias in spatio-temporal sampling of predation events</p>
 
