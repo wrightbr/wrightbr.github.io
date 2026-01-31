@@ -481,6 +481,19 @@
 
         .legend-box.origin {
             background: #56B4E9;  /* Colorblind-friendly blue */
+            position: relative;
+        }
+        
+        .legend-box.origin::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .legend-box.continuation {
@@ -673,6 +686,19 @@
         /* Enhancement #3: Patterns for Accessibility */
         .cell.origin {
             background: #56B4E9;  /* Colorblind-friendly blue */
+            position: relative;
+        }
+        
+        .cell.origin::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .cell.continuation {
@@ -846,7 +872,7 @@
                 <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (blue) and predation paths (orange)</li>
                 <li><strong>Draw Sample:</strong> Click "Draw Sample" to randomly sample cells. Red borders show sampled cells (origins, predation paths, and empty cells)</li>
                 <li><strong>Compare Approaches:</strong> Review unbiased estimates (counting only origins) vs. biased estimates (including predation paths)</li>
-                <li><strong>View Simulation:</strong> The simulation automatically runs after drawing a sample, showing distributions from 1000+ repeated samples</li>
+                <li><strong>View Simulation:</strong> The simulation automatically runs after drawing a sample, showing distributions from repeated samples</li>
             </ol>
         </div>
 
