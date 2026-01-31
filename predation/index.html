@@ -1497,6 +1497,9 @@
             
             // Clear true total
             document.getElementById('trueTotal').textContent = '-';
+            
+            // Re-validate parameters to clear any warnings
+            validateParameters();
         }
 
         function init() {
