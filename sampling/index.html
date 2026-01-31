@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Random Sampling Demo</title>
+    <title>Predation Sampling Demo</title>
     <style>
         * {
             margin: 0;
@@ -862,7 +862,7 @@
             <h3>How to Use This Demo</h3>
             <ol>
                 <li><strong>Set Parameters:</strong> Choose temporal units (rows), predation probability (p), and sampling fraction</li>
-                <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (dark blue) and predation paths (light blue)</li>
+                <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (green) and predation paths (light blue)</li>
                 <li><strong>Draw Sample:</strong> Click "Draw Sample" to randomly sample cells. Red borders show sampled cells (origins, predation paths, and empty cells)</li>
                 <li><strong>Compare Approaches:</strong> Review unbiased estimates (counting only origins) vs. biased estimates (including predation paths)</li>
                 <li><strong>View Simulation:</strong> The simulation automatically runs after drawing a sample, showing distributions from 1000+ repeated samples</li>
@@ -922,16 +922,13 @@
                 <h2>Spatio-Temporal Sampling Frame (<span id="frameSize">6 × 400</span>)</h2>
                 <div class="legend">
                     <div class="legend-item">
-                        <div class="legend-box origin">1</div>
-                        <span class="legend-text">Event Origin</span>
+                        <div class="legend-box origin"></div>
+                        <span class="legend-text">Predation Origin</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-box continuation">○</div>
+                        <div class="legend-arrow" style="margin-left: 5px;"></div>
                         <span class="legend-text">Predation Path</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-arrow"></div>
-                        <span class="legend-text">Predation Trace</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-box sampled"></div>
@@ -1246,16 +1243,20 @@
             const rect = event.target.getBoundingClientRect();
             const tooltipRect = richTooltip.getBoundingClientRect();
             
-            let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-            let top = rect.top - tooltipRect.height - 10;
+            // Account for page scroll
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            let left = rect.left + scrollLeft + (rect.width / 2) - (tooltipRect.width / 2);
+            let top = rect.top + scrollTop - tooltipRect.height - 10;
             
             // Keep tooltip on screen
-            if (left < 10) left = 10;
-            if (left + tooltipRect.width > window.innerWidth - 10) {
-                left = window.innerWidth - tooltipRect.width - 10;
+            if (left < scrollLeft + 10) left = scrollLeft + 10;
+            if (left + tooltipRect.width > scrollLeft + window.innerWidth - 10) {
+                left = scrollLeft + window.innerWidth - tooltipRect.width - 10;
             }
-            if (top < 10) {
-                top = rect.bottom + 10;
+            if (top < scrollTop + 10) {
+                top = rect.bottom + scrollTop + 10;
             }
             
             richTooltip.style.left = left + 'px';
@@ -1653,7 +1654,7 @@
                         tooltipContent += `
                             <div class="tooltip-row">
                                 <span class="tooltip-label">Type:</span>
-                                <span class="tooltip-value">Event Origin</span>
+                                <span class="tooltip-value">Predation Origin</span>
                             </div>
                             <div class="tooltip-row">
                                 <span class="tooltip-label">Value:</span>
