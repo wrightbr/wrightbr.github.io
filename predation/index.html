@@ -258,7 +258,6 @@
         .cell.continuation {
             background: #bee3f8;
             color: #2c5282;
-            border: 1px dashed #4299e1;
         }
 
         .cell.sampled {
@@ -481,36 +480,38 @@
         }
 
         .legend-box.origin {
-            background: #E69F00;  /* Colorblind-friendly orange */
+            background: #56B4E9;  /* Colorblind-friendly blue */
         }
 
         .legend-box.continuation {
-            background: #56B4E9;  /* Colorblind-friendly blue */
-        }
+            background: #E69F00;  /* Colorblind-friendly orange */
         }
 
         .legend-box.sampled {
             background: #f7fafc;
             border: 2px solid #f56565;
+            min-width: 24px;
+            min-height: 24px;
         }
 
         .legend-arrow {
-            width: 30px;
-            height: 2px;
+            width: 20px;
+            height: 1.5px;
             background: #000;
             position: relative;
+            margin-left: 5px;
         }
 
         .legend-arrow::after {
             content: '';
             position: absolute;
-            right: -6px;
-            top: -3px;
+            right: -5px;
+            top: -2.5px;
             width: 0;
             height: 0;
-            border-left: 8px solid #000;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
+            border-left: 6px solid #000;
+            border-top: 3px solid transparent;
+            border-bottom: 3px solid transparent;
         }
 
         .legend-text {
@@ -668,11 +669,11 @@
 
         /* Enhancement #3: Patterns for Accessibility */
         .cell.origin {
-            background: #E69F00;  /* Colorblind-friendly orange */
+            background: #56B4E9;  /* Colorblind-friendly blue */
         }
 
         .cell.continuation {
-            background: #56B4E9;  /* Colorblind-friendly blue */
+            background: #E69F00;  /* Colorblind-friendly orange */
         }
 
         /* Enhancement #6: Key Insights Panel */
@@ -839,7 +840,7 @@
             <h3>How to Use This Demo</h3>
             <ol>
                 <li><strong>Set Parameters:</strong> Choose temporal units (rows), predation probability (p), and sampling fraction</li>
-                <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (orange) and predation paths (blue)</li>
+                <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (blue) and predation paths (orange)</li>
                 <li><strong>Draw Sample:</strong> Click "Draw Sample" to randomly sample cells. Red borders show sampled cells (origins, predation paths, and empty cells)</li>
                 <li><strong>Compare Approaches:</strong> Review unbiased estimates (counting only origins) vs. biased estimates (including predation paths)</li>
                 <li><strong>View Simulation:</strong> The simulation automatically runs after drawing a sample, showing distributions from 1000+ repeated samples</li>
@@ -850,7 +851,7 @@
             <h3>About Predation Events & Event Duration Bias</h3>
             <p><strong>Scenario:</strong> Each cell represents a 1-hectare water plot observed during a 30-minute period. Pinnipeds surface with newly caught fish with probability p. Once surfaced, feeding continues across space (horizontal), time (vertical down), or both (diagonal) until the fish is consumed. <em>For simplicity, the data generating model was assumed to be Bernoulli(p), that is a one or zero, when in reality the number of fish caught per cell can be any integer value (e.g., 0, 1, 2, etc.).</em></p>
             
-            <p style="margin-top: 10px;"><strong>Event Duration Bias:</strong> Longer events spanning multiple cells have higher detection probability than single-cell events. <strong>Unbiased estimation requires counting only event origins</strong> (orange cells), not predation paths (blue cells). Including predation paths creates positive bias.</p>
+            <p style="margin-top: 10px;"><strong>Event Duration Bias:</strong> Longer events spanning multiple cells have higher detection probability than single-cell events. <strong>Unbiased estimation requires counting only event origins</strong> (blue cells), not predation paths (orange cells). Including predation paths creates positive bias.</p>
             
             <p style="margin-top: 15px; padding: 12px; background: #fff5f5; border-left: 4px solid #e53e3e; border-radius: 4px; color: #c53030; font-weight: 600; font-size: 0.95em;">
                 Note: This demonstration assumes perfect detection (probability of detection = 1, given a predation event occurs). In reality, detection probability is often less than 1 and may vary with event characteristics.
@@ -904,6 +905,7 @@
                     </div>
                     <div class="legend-item">
                         <div class="legend-box continuation"></div>
+                        <div class="legend-arrow"></div>
                         <span class="legend-text">Predation Path</span>
                     </div>
                     <div class="legend-item">
@@ -1713,17 +1715,17 @@
             svg.style.height = '100%';
             svg.style.pointerEvents = 'none';
             
-            // Define arrowhead marker
+            // Define arrowhead marker - solid filled triangle (smaller)
             const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
             const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
             marker.setAttribute('id', 'arrowhead-' + Math.random().toString(36).substr(2, 9));
-            marker.setAttribute('markerWidth', '10');
-            marker.setAttribute('markerHeight', '10');
-            marker.setAttribute('refX', '9');
-            marker.setAttribute('refY', '3');
+            marker.setAttribute('markerWidth', '8');
+            marker.setAttribute('markerHeight', '8');
+            marker.setAttribute('refX', '7');
+            marker.setAttribute('refY', '2.5');
             marker.setAttribute('orient', 'auto');
             const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-            polygon.setAttribute('points', '0 0, 10 3, 0 6');
+            polygon.setAttribute('points', '0 0, 8 2.5, 0 5');
             polygon.setAttribute('fill', '#000000');
             marker.appendChild(polygon);
             defs.appendChild(marker);
