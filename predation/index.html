@@ -105,8 +105,8 @@
         }
 
         button {
-            background: #667eea;
-            color: white;
+            background: #60a5fa;
+            color: #000;
             border: none;
             padding: 12px 30px;
             border-radius: 6px;
@@ -114,13 +114,13 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 6px rgba(96, 165, 250, 0.3);
         }
 
         button:hover {
-            background: #5568d3;
+            background: #3b82f6;
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 12px rgba(96, 165, 250, 0.4);
         }
 
         button:active {
@@ -885,7 +885,7 @@
 </head>
 <body>
     <div class="container">
-        <img src="sampling.jpg" alt="Image" class="header-image">
+        <img src="sampling.jpg" alt="Sampling" class="header-image">
         <h1>Pinniped Predation Sampling Demo</h1>
         <p class="subtitle">Demonstrating event duration bias in spatio-temporal sampling of predation events</p>
 
@@ -896,7 +896,7 @@
                 <li><strong>Create Population:</strong> Click "Create Population" to generate a new sampling frame with predation events (blue) and predation paths (orange)</li>
                 <li><strong>Draw Sample:</strong> Click "Draw Sample" to randomly sample cells. Red borders show sampled cells (origins, predation paths, and empty cells)</li>
                 <li><strong>Compare Approaches:</strong> Review unbiased estimates (counting only origins) vs. biased estimates (including predation paths)</li>
-                <li><strong>View Simulation:</strong> The simulation automatically runs after drawing a sample, showing distributions from repeated samples</li>
+                <li><strong>View Simulation:</strong> The simulation automatically runs after creating a population, showing distributions from repeated samples</li>
             </ol>
         </div>
 
@@ -904,7 +904,7 @@
             <div class="control-group">
                 <label for="temporalUnits">Temporal Units (Rows):</label>
                 <input type="number" id="temporalUnits" class="param-input" value="400" min="50" max="1000" step="50">
-                <span style="color: #718096; font-size: 0.9em; margin-left: 10px;">Number of time periods in the sampling frame</span>
+                <span style="color: #718096; font-size: 0.9em; margin-left: 10px;">Number of time periods in the sampling frame (50-1000, increments of 50)</span>
             </div>
             <div class="control-group">
                 <label for="param1">Predation Probability (p):</label>
@@ -930,7 +930,7 @@
             <div class="control-group">
                 <button onclick="generateNewPopulation()">Create Population</button>
                 <button onclick="drawSample()">Draw Sample</button>
-                <button onclick="resetDefaults()" style="background: #805ad5;">Reset Default Parameters</button>
+                <button onclick="resetDefaults()" style="background: #6d28d9; color: white;">Reset Default Parameters</button>
             </div>
         </div>
 
@@ -941,7 +941,7 @@
             <div class="panel">
                 <h2>Spatio-Temporal Sampling Frame (<span id="frameSize">6 × 400</span>)</h2>
                 <div style="margin: 15px 0;">
-                    <button onclick="toggleMoreInfo()" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <button onclick="toggleMoreInfo()" style="background: #718096; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                         <span id="moreInfoIcon">▶</span> More Information
                     </button>
                     <div id="moreInfoContent" style="display: none; color: #4a5568; font-size: 0.9em; line-height: 1.5; margin-top: 10px; padding: 12px; background: #f7fafc; border-left: 3px solid #667eea; border-radius: 4px;">
@@ -1173,62 +1173,73 @@
         </div>
     </div>
 
-    <div class="info-box" style="max-width: 1400px; margin: 20px auto; background: #f7fafc; border-color: #cbd5e0;">
-        <h3 style="font-size: 0.9em; color: #4a5568;">Footnotes</h3>
-        
-        <h4 style="font-size: 0.85em; color: #4a5568; margin-top: 15px; margin-bottom: 8px;">Statistical Formulas</h4>
-        <p style="font-size: 0.85em; color: #4a5568; margin-bottom: 10px;">For simple random sampling without replacement:</p>
-        
-        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-            <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Estimated Total:</strong></p>
-            <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
-                τ̂ = N × ȳ
+    <div style="max-width: 1400px; margin: 20px auto;">
+        <button onclick="toggleFootnotes()" style="background: #fb923c; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 0.95em; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <span id="footnotesIcon">▶</span> Statistical Formulas & References
+        </button>
+        <div id="footnotesContent" style="display: none; margin-top: 15px; padding: 20px; background: #f7fafc; border: 2px solid #cbd5e0; border-radius: 8px;">
+            <h4 style="font-size: 0.85em; color: #4a5568; margin-bottom: 8px;">Statistical Formulas</h4>
+            <p style="font-size: 0.85em; color: #4a5568; margin-bottom: 10px;">For simple random sampling without replacement:</p>
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Sample Mean:</strong></p>
+                <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
+                    ȳ = (1/n) × Σyᵢ
+                </div>
+                <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where n = sample size, yᵢ = value of the i-th sampled unit</p>
             </div>
-            <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where N = population size, ȳ = sample mean</p>
-        </div>
-        
-        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-            <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Standard Error of the Total:</strong></p>
-            <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
-                SE(τ̂) = N × √[(N - n)/(N - 1) × s²/n]
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Estimated Total:</strong></p>
+                <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
+                    τ̂ = N × ȳ
+                </div>
+                <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where N = population size, ȳ = sample mean</p>
             </div>
-            <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where s² = sample variance, n = sample size, (N-n)/(N-1) = finite population correction</p>
-        </div>
-        
-        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-            <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>95% Confidence Interval:</strong></p>
-            <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
-                CI₉₅ = τ̂ ± 1.96 × SE(τ̂)
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Standard Error of the Total:</strong></p>
+                <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
+                    SE(τ̂) = N × √[(N - n)/(N - 1) × s²/n]
+                </div>
+                <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where s² = sample variance, n = sample size, (N-n)/(N-1) = finite population correction</p>
             </div>
-            <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where 1.96 is the critical value from the standard normal distribution for 95% confidence</p>
-        </div>
-        
-        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-            <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Sample Variance (for Bernoulli data):</strong></p>
-            <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
-                s² = ȳ(1 - ȳ)
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>95% Confidence Interval:</strong></p>
+                <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
+                    CI₉₅ = τ̂ ± 1.96 × SE(τ̂)
+                </div>
+                <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">where 1.96 is the critical value from the standard normal distribution for 95% confidence</p>
             </div>
-            <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">This simplified form applies when the response is binary (0 or 1)</p>
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <p style="font-size: 0.85em; color: #2d3748; margin-bottom: 8px;"><strong>Sample Variance (for Bernoulli data):</strong></p>
+                <div class="formula" style="font-size: 0.9em; font-family: 'Times New Roman', serif;">
+                    s² = ȳ(1 - ȳ)
+                </div>
+                <p style="font-size: 0.8em; color: #4a5568; margin-top: 5px;">This simplified form applies when the response is binary (0 or 1)</p>
+            </div>
+            
+            <h4 style="font-size: 0.85em; color: #4a5568; margin-top: 15px; margin-bottom: 8px;">Event Dynamics</h4>
+            <p style="font-size: 0.85em; color: #4a5568;">The simulation generates predation events with the following probabilistic parameters:</p>
+            <div class="formula" style="font-size: 0.85em;">
+                Duration: 1 cell (40%), 2 cells (30%), 3 cells (30%)
+            </div>
+            <div class="formula" style="font-size: 0.85em;">
+                Direction: Down/temporal (50%), Diagonal (25%), Across/spatial (25%)
+            </div>
+            
+            <h4 style="font-size: 0.85em; color: #4a5568; margin-top: 20px; margin-bottom: 8px;">References</h4>
+            <p style="font-size: 0.85em; color: #4a5568; margin-bottom: 8px;">For further reading on sampling and detectability:</p>
+            <ul style="font-size: 0.85em; color: #4a5568; line-height: 1.8; margin-left: 20px;">
+                <li>Hankin, D.G. (2024). <em>Sampling Theory for the Ecological and Natural Resource Sciences</em>. Oxford University Press.</li>
+                <li>Thompson, S.K. (2012). <em>Sampling</em> (3rd ed.). John Wiley & Sons.</li>
+                <li>Lohr, S.L. (2021). <em>Sampling: Design and Analysis</em> (3rd ed.). Chapman and Hall/CRC.</li>
+                <li>Anderson, D.R. (2001). The need to get the basics right in wildlife field studies. <em>Wildlife Society Bulletin</em>, 29(4), 1294-1297.</li>
+                <li>Marsh, H. & Sinclair, D.F. (1989). Correcting for visibility bias in strip transect aerial surveys of aquatic fauna. <em>Journal of Wildlife Management</em>, 53(4), 1017-1024.</li>
+            </ul>
         </div>
-        
-        <h4 style="font-size: 0.85em; color: #4a5568; margin-bottom: 8px;">Event Dynamics</h4>
-        <p style="font-size: 0.85em; color: #4a5568;">The simulation generates predation events with the following probabilistic parameters:</p>
-        <div class="formula" style="font-size: 0.85em;">
-            Duration: 1 cell (40%), 2 cells (30%), 3 cells (30%)
-        </div>
-        <div class="formula" style="font-size: 0.85em;">
-            Direction: Down/temporal (50%), Diagonal (25%), Across/spatial (25%)
-        </div>
-        
-        <h4 style="font-size: 0.85em; color: #4a5568; margin-top: 20px; margin-bottom: 8px;">References</h4>
-        <p style="font-size: 0.85em; color: #4a5568; margin-bottom: 8px;">For further reading on sampling and detectability:</p>
-        <ul style="font-size: 0.85em; color: #4a5568; line-height: 1.8; margin-left: 20px;">
-            <li>Hankin, D.G. (2024). <em>Sampling Theory for the Ecological and Natural Resource Sciences</em>. Oxford University Press.</li>
-            <li>Thompson, S.K. (2012). <em>Sampling</em> (3rd ed.). John Wiley & Sons.</li>
-            <li>Lohr, S.L. (2021). <em>Sampling: Design and Analysis</em> (3rd ed.). Chapman and Hall/CRC.</li>
-            <li>Anderson, D.R. (2001). The need to get the basics right in wildlife field studies. <em>Wildlife Society Bulletin</em>, 29(4), 1294-1297.</li>
-            <li>Marsh, H. & Sinclair, D.F. (1989). Correcting for visibility bias in strip transect aerial surveys of aquatic fauna. <em>Journal of Wildlife Management</em>, 53(4), 1017-1024.</li>
-        </ul>
     </div>
 
     <!-- Rich Tooltip -->
@@ -1619,7 +1630,7 @@
 
         function updatePopulationStats() {
             const total = population.reduce((sum, val) => sum + val, 0);
-            document.getElementById('trueTotal').textContent = total.toFixed(2);
+            document.getElementById('trueTotal').textContent = Math.round(total);
             document.getElementById('popSize').textContent = N;
         }
 
@@ -1941,18 +1952,18 @@
             
             // Unbiased estimates
             document.getElementById('originsDetected').textContent = `${sampledOrigins.length} (sum = ${originSum.toFixed(1)})`;
-            document.getElementById('estimatedTotal').textContent = unbiasedTotal.toFixed(2);
+            document.getElementById('estimatedTotal').textContent = unbiasedTotal.toFixed(1);
             document.getElementById('confidenceInterval').textContent = 
-                `[${ciLower.toFixed(2)}, ${ciUpper.toFixed(2)}]`;
+                `[${ciLower.toFixed(1)}, ${ciUpper.toFixed(1)}]`;
             
             // Biased estimates
             document.getElementById('totalDetections').textContent = 
                 `${totalDetections} (${sampledOrigins.length} origins + ${sampledContinuations.length} predation paths)`;
-            document.getElementById('biasedTotal').textContent = biasedTotal.toFixed(2);
+            document.getElementById('biasedTotal').textContent = biasedTotal.toFixed(1);
             document.getElementById('biasedConfidenceInterval').textContent = 
-                `[${biasedCILower.toFixed(2)}, ${biasedCIUpper.toFixed(2)}]`;
+                `[${biasedCILower.toFixed(1)}, ${biasedCIUpper.toFixed(1)}]`;
             document.getElementById('bias').textContent = 
-                `+${bias.toFixed(2)} (+${biasPercent.toFixed(1)}%)`;
+                `+${bias.toFixed(1)} (+${biasPercent.toFixed(1)}%)`;
         }
 
         function resetSample() {
@@ -2103,16 +2114,16 @@
             document.getElementById('simulationSummary').style.display = 'block';
             
             // Standard deviation is already in the table
-            document.getElementById('simUnbiasedStd').textContent = unbiasedStd.toFixed(2);
-            document.getElementById('simBiasedStd').textContent = biasedStd.toFixed(2);
+            document.getElementById('simUnbiasedStd').textContent = unbiasedStd.toFixed(1);
+            document.getElementById('simBiasedStd').textContent = biasedStd.toFixed(1);
             
             // Populate comparison table
-            document.getElementById('theoreticalExpected').textContent = trueTotal.toFixed(2);
-            document.getElementById('empiricalUnbiasedExpected').textContent = unbiasedMean.toFixed(2);
-            document.getElementById('empiricalBiasedExpected').textContent = biasedMean.toFixed(2);
+            document.getElementById('theoreticalExpected').textContent = Math.round(trueTotal);
+            document.getElementById('empiricalUnbiasedExpected').textContent = unbiasedMean.toFixed(1);
+            document.getElementById('empiricalBiasedExpected').textContent = biasedMean.toFixed(1);
             
-            document.getElementById('empiricalUnbiasedBias').textContent = (unbiasedMean - trueTotal).toFixed(2);
-            document.getElementById('empiricalBiasedBias').textContent = (biasedMean - trueTotal).toFixed(2);
+            document.getElementById('empiricalUnbiasedBias').textContent = (unbiasedMean - trueTotal).toFixed(1);
+            document.getElementById('empiricalBiasedBias').textContent = (biasedMean - trueTotal).toFixed(1);
             
             document.getElementById('theoreticalUnbiasedCoverage').textContent = `${(unbiasedCoverage * 100).toFixed(1)}%`;
             document.getElementById('theoreticalBiasedCoverage').textContent = `${(biasedCoverage * 100).toFixed(1)}%`;
@@ -2242,6 +2253,20 @@
         function toggleMoreInfo() {
             const content = document.getElementById('moreInfoContent');
             const icon = document.getElementById('moreInfoIcon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▶';
+            }
+        }
+
+        // Toggle Footnotes dropdown
+        function toggleFootnotes() {
+            const content = document.getElementById('footnotesContent');
+            const icon = document.getElementById('footnotesIcon');
             
             if (content.style.display === 'none') {
                 content.style.display = 'block';
