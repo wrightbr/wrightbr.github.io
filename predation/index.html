@@ -930,7 +930,7 @@
             <div class="control-group">
                 <button onclick="generateNewPopulation()">Create Population</button>
                 <button onclick="drawSample()">Draw Sample</button>
-                <button onclick="resetDefaults()" style="background: #6d28d9; color: white;">Reset Default Parameters</button>
+                <button onclick="resetDefaults()" style="background: #6d28d9; color: white;">Reset</button>
             </div>
         </div>
 
@@ -1532,6 +1532,29 @@
             document.getElementById('sampleInfo').style.display = 'none';
             document.getElementById('sampleStats').style.display = 'none';
             document.getElementById('simulationSummary').style.display = 'none';
+            document.getElementById('insightsPanel').style.display = 'none';
+            
+            // Clear the frequency distribution canvas
+            const canvas = document.getElementById('distributionCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Collapse all toggle sections
+            const moreInfoContent = document.getElementById('moreInfoContent');
+            const moreInfoIcon = document.getElementById('moreInfoIcon');
+            if (moreInfoContent && moreInfoIcon) {
+                moreInfoContent.style.display = 'none';
+                moreInfoIcon.textContent = '▶';
+            }
+            
+            const footnotesContent = document.getElementById('footnotesContent');
+            const footnotesIcon = document.getElementById('footnotesIcon');
+            if (footnotesContent && footnotesIcon) {
+                footnotesContent.style.display = 'none';
+                footnotesIcon.textContent = '▶';
+            }
             
             // Clear true total
             document.getElementById('trueTotal').textContent = '-';
