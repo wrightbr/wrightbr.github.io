@@ -1,1 +1,2589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Literacy App</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Charter', 'Georgia', serif;
+      background: #f8fafc;
+    }
+
+    #root {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .app {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      font-family: 'Charter', 'Georgia', serif;
+      color: #1e293b;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #2563eb;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: -0.03em;
+      transition: color 0.3s;
+    }
+
+    .nav-brand:hover {
+      color: #1d4ed8;
+    }
+
+    .nav-brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+    }
+
+    .nav-brand-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .nav-brand-subtitle {
+      font-size: 0.625rem;
+      font-weight: 400;
+      color: #64748b;
+      font-style: italic;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-links button {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 500;
+      transition: all 0.3s;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links button:hover {
+      background: rgba(148, 163, 184, 0.1);
+      color: #1e293b;
+    }
+
+    .nav-links button.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+
+    .home-section {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .hero-content h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #1e40af 0%, #6d28d9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.04em;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      color: #475569;
+      margin-bottom: 3rem;
+      font-weight: 400;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 0.5rem;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
+    }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .topic-card {
+      background: white;
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 2.5rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .topic-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(139, 92, 246, 0.05));
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .topic-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(37, 99, 235, 0.3);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+    }
+
+    .topic-card:hover::before {
+      opacity: 1;
+    }
+
+    .topic-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topic-card h3 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      color: #1e293b;
+      position: relative;
+      z-index: 1;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .topic-card p {
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+      font-size: 1rem;
+    }
+
+    .topic-arrow {
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s;
+    }
+
+    .topic-card:hover .topic-arrow {
+      transform: translateX(8px);
+    }
+
+    .section-content {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.375rem;
+      color: #1e293b;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .section-header p {
+      font-size: 0.8125rem;
+      color: #1e293b;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .simulator-layout {
+      display: flex;
+      background: white;
+      backdrop-filter: blur(10px);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      height: calc(100vh - 180px);
+      min-height: 500px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .controls-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .controls-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .controls-panel::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .results-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      padding-left: 1rem;
+    }
+
+    .results-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .results-panel::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+
+    .results-panel::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .results-panel::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .results-panel h3 {
+      font-size: 1rem;
+      color: #1e293b;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .unified-budget-panel {
+      width: 100%;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .unified-budget-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .unified-budget-panel::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+
+    .unified-budget-panel::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .unified-budget-panel::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .budget-header-row,
+    .budget-status-row,
+    .budget-category-row,
+    .budget-footer-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .budget-header-row {
+      margin-bottom: 0.5rem;
+    }
+
+    .budget-header-row h3 {
+      font-size: 1rem;
+      color: #1e293b;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+    }
+
+    .budget-header-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    .pie-chart-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .pie-chart-container h3 {
+      font-size: 1rem;
+      color: #1e293b;
+      font-weight: 600;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .pie-chart {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+    }
+
+    .pie-legend {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      padding: 0.375rem 0.5rem;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .legend-label {
+      flex: 1;
+      font-weight: 600;
+      color: #1e293b;
+      text-transform: capitalize;
+    }
+
+    .legend-value {
+      font-family: 'SF Mono', 'Monaco', monospace;
+      color: #64748b;
+      font-size: 0.75rem;
+    }
+
+    .budget-slider-values {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .budget-recommended-inline {
+      font-size: 0.6875rem;
+      color: #64748b;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .budget-footnotes-section {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .budget-col-left,
+    .budget-col-right {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .budget-category-row {
+      padding-bottom: 0.625rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .budget-footer-section {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 2px solid #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .budget-footer-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .controls-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.2), transparent);
+      margin: 1rem 0 1.5rem 0;
+      grid-column: 1 / -1;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      background: white;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .control-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e293b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .category-icon {
+      font-size: 1.125rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-group.income-control {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
+      border: 2px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+    }
+
+    .control-group.income-control label {
+      color: #059669;
+      font-size: 0.8125rem;
+    }
+
+    .control-group.unallocated-control {
+      background: linear-gradient(135deg, rgba(203, 213, 225, 0.15), rgba(203, 213, 225, 0.05));
+      border: 2px dashed rgba(203, 213, 225, 0.5);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .control-group.unallocated-control label {
+      color: #64748b;
+      font-size: 0.8125rem;
+    }
+
+    .unallocated-slider {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .comparison-info {
+      color: #64748b;
+      font-style: italic;
+      font-size: 0.75rem;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      background: white;
+      color: #1e293b;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .input-box:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .input-box:disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .input-box.income-input {
+      border-color: #10b981;
+      font-size: 1.25rem;
+    }
+
+    .input-box.income-input:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .input-box.unallocated-input {
+      border-style: dashed;
+      border-color: #cbd5e1;
+    }
+
+    .input-suffix {
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-top: 0.375rem;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .income-slider::-webkit-slider-thumb:hover {
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.7) !important;
+    }
+
+    .income-value {
+      color: #059669 !important;
+      font-size: 1.5rem !important;
+    }
+
+    .control-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2563eb;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .budget-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.875rem;
+      background: #f8fafc;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .total-good {
+      color: #059669;
+    }
+
+    .total-bad {
+      color: #dc2626;
+    }
+
+    .reset-button {
+      width: 100%;
+      padding: 0.875rem;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .reset-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .reset-button:active {
+      transform: translateY(0);
+    }
+
+    .warning-box {
+      padding: 0.75rem 1rem;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      color: #dc2626;
+      font-weight: 500;
+      font-size: 0.8125rem;
+    }
+
+    .warning-box.large {
+      padding: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .info-box {
+      padding: 0.75rem 1rem;
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      border-radius: 10px;
+      color: #1d4ed8;
+      font-weight: 500;
+      font-size: 0.8125rem;
+    }
+
+    .success-box {
+      padding: 0.75rem 1rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      color: #059669;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .budget-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .budget-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .budget-percentages {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .budget-percent {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 0.9375rem;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .budget-percent.over-budget {
+      color: #dc2626;
+    }
+
+    .budget-recommended {
+      font-size: 0.75rem;
+      color: #1e293b;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .budget-bars-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .budget-bar {
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .budget-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      border-radius: 6px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .budget-bar-fill.over-budget-bar {
+      background: linear-gradient(90deg, #dc2626, #b91c1c);
+    }
+
+    .budget-comparison {
+      font-size: 0.8125rem;
+      margin-top: 0.25rem;
+    }
+
+    .comparison-high {
+      color: #ea580c;
+    }
+
+    .comparison-low {
+      color: #2563eb;
+    }
+
+    .comparison-good {
+      color: #059669;
+    }
+
+    .insight-box {
+      padding: 0.875rem;
+      background: rgba(37, 99, 235, 0.05);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 10px;
+    }
+
+    .insight-box h4 {
+      font-size: 0.875rem;
+      color: #1d4ed8;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .insight-box p {
+      color: #1e293b;
+      line-height: 1.5;
+      font-size: 0.8125rem;
+    }
+
+    .footnotes-box {
+      padding: 1rem;
+      background: rgba(139, 92, 246, 0.05);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 10px;
+      margin-top: 0.75rem;
+    }
+
+    .footnotes-box h4 {
+      font-size: 0.875rem;
+      color: #7c3aed;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .footnotes-box p {
+      color: #1e293b;
+      line-height: 1.5;
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .footnotes-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      margin: 0.5rem 0;
+      padding: 0;
+    }
+
+    .footnotes-box li {
+      color: #1e293b;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .footnotes-box li::before {
+      content: '•';
+      position: absolute;
+      left: 0.375rem;
+      color: #7c3aed;
+      font-weight: 700;
+    }
+
+    .footnotes-box strong {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .footnote-disclaimer {
+      font-style: italic;
+      color: #475569;
+      margin-top: 0.5rem;
+      margin-bottom: 0 !important;
+    }
+
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 0.75rem;
+      color: #1e293b;
+      overflow-x: auto;
+    }
+
+    .over-budget-summary {
+      padding: 0.875rem;
+      background: rgba(239, 68, 68, 0.05);
+      border: 2px solid rgba(239, 68, 68, 0.2);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .over-budget-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9375rem;
+      color: #1e293b;
+    }
+
+    .over-budget-item.total {
+      padding-top: 0.625rem;
+      border-top: 2px solid rgba(239, 68, 68, 0.2);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .over-budget-item .positive {
+      color: #059669;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .over-budget-item .negative {
+      color: #ea580c;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .over-budget-item .deficit {
+      color: #dc2626;
+      font-weight: 700;
+      font-size: 1.25rem;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    /* Credit Score Styles */
+    .credit-score-display {
+      display: flex;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .score-circle {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 8px solid;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.6);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .score-number {
+      font-size: 4rem;
+      font-weight: 700;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    .score-rating {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 0.5rem;
+    }
+
+    .credit-scale {
+      margin: 2rem 0;
+    }
+
+    .scale-bar {
+      height: 12px;
+      background: linear-gradient(90deg, 
+        #ef4444 0%, 
+        #f59e0b 33%, 
+        #8b5cf6 66%, 
+        #10b981 100%
+      );
+      border-radius: 6px;
+      position: relative;
+      margin-bottom: 0.75rem;
+    }
+
+    .scale-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 3px solid white;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      color: #1e293b;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .tips-box {
+      padding: 1.5rem;
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      border-radius: 12px;
+    }
+
+    .tips-box h4 {
+      font-size: 1.125rem;
+      color: #a78bfa;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .tips-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tips-box li {
+      color: #1e293b;
+      padding-left: 1.5rem;
+      position: relative;
+      line-height: 1.5;
+      font-size: 0.8125rem;
+    }
+
+    .tips-box li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #a78bfa;
+      font-weight: 700;
+    }
+
+    /* Investment & Debt Styles */
+    .investment-summary, .debt-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .summary-item {
+      padding: 1.5rem;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .summary-item.primary {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(167, 139, 250, 0.2));
+      border-color: rgba(96, 165, 250, 0.3);
+    }
+
+    .summary-label {
+      font-size: 0.75rem;
+      color: #1e293b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .summary-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #1e293b;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .summary-value.large {
+      font-size: 1.75rem;
+      color: #2563eb;
+    }
+
+    .summary-value.growth {
+      color: #059669;
+    }
+
+    .summary-value.warning {
+      color: #ea580c;
+    }
+
+    .summary-sublabel {
+      font-size: 0.8125rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+      font-weight: 500;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .summary-item.principal-item {
+      background: linear-gradient(135deg, rgba(196, 181, 253, 0.3), rgba(167, 139, 250, 0.3));
+      border: 1px solid rgba(167, 139, 250, 0.4);
+    }
+
+    .summary-item.interest-item {
+      background: linear-gradient(135deg, rgba(253, 186, 116, 0.3), rgba(251, 146, 60, 0.3));
+      border: 1px solid rgba(251, 146, 60, 0.4);
+    }
+
+    .summary-item.total-item {
+      background: linear-gradient(135deg, rgba(129, 140, 248, 0.3), rgba(99, 102, 241, 0.3));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .investment-chart, .debt-chart {
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      margin-top: 1rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .chart-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .chart-container {
+      display: flex;
+      gap: 0.75rem;
+      height: 250px;
+    }
+
+    .chart-y-axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-right: 0.5rem;
+      border-right: 2px solid #cbd5e1;
+    }
+
+    .y-axis-label {
+      font-size: 0.6875rem;
+      color: #64748b;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      text-align: right;
+    }
+
+    .chart-bars {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      align-items: flex-end;
+      flex: 1;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 0.5rem;
+    }
+
+    .chart-bar {
+      flex: 1;
+      max-width: 100px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .bar-fill {
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 0.5rem;
+      transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .chart-bar.contributed .bar-fill {
+      background: linear-gradient(180deg, #93c5fd, #60a5fa);
+    }
+
+    .chart-bar.earnings .bar-fill {
+      background: linear-gradient(180deg, #86efac, #4ade80);
+    }
+
+    .chart-bar.fees .bar-fill {
+      background: linear-gradient(180deg, #fca5a5, #ef4444);
+    }
+
+    .chart-bar.net .bar-fill {
+      background: linear-gradient(180deg, #818cf8, #6366f1);
+    }
+
+    .chart-bar.principal .bar-fill {
+      background: linear-gradient(180deg, #c4b5fd, #a78bfa);
+    }
+
+    .chart-bar.interest .bar-fill {
+      background: linear-gradient(180deg, #fdba74, #fb923c);
+    }
+
+    .chart-bar.total .bar-fill {
+      background: linear-gradient(180deg, #818cf8, #6366f1);
+    }
+
+    .bar-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: #1e293b;
+      text-align: center;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .x-axis-label {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e293b;
+      text-align: center;
+    }
+
+    .comparison-box {
+      padding: 1rem;
+      background: rgba(167, 139, 246, 0.08);
+      border: 1px solid rgba(167, 139, 246, 0.2);
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+
+    .comparison-box h4 {
+      font-size: 0.875rem;
+      color: #7c3aed;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .comparison-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.625rem;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+      font-size: 0.75rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .comparison-item span:first-child {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .comparison-item span:nth-child(2) {
+      color: #059669;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .comparison-item span:nth-child(3) {
+      color: #64748b;
+      font-size: 0.6875rem;
+    }
+
+    @media (max-width: 1024px) {
+      .simulator-layout {
+        height: auto;
+        flex-direction: column;
+      }
+
+      .controls-panel,
+      .results-panel {
+        padding-left: 0;
+      }
+
+      .hero-content h1 {
+        font-size: 3rem;
+      }
+
+      .hero-stats {
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+
+      .hero-content h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+      }
+
+      .topics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header h2 {
+        font-size: 2rem;
+      }
+
+      .simulator-layout {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+    const { createRoot } = ReactDOM;
+
+    // Lucide icons as components
+    function DollarSign({ size = 24 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+      );
+    }
+
+    function TrendingUp({ size = 24 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+      );
+    }
+
+    function CreditCard({ size = 24 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+      );
+    }
+
+    function PiggyBank({ size = 24 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V5z"></path>
+          <path d="M2 9v1c0 1.1.9 2 2 2h1"></path>
+          <path d="M16 11h0"></path>
+        </svg>
+      );
+    }
+
+    function ArrowRight({ size = 24 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      );
+    }
+
+    function Check({ size = 24 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      );
+    }
+
+    function FinancialLiteracyApp() {
+      const [activeSection, setActiveSection] = useState('home');
+      
+      // Budgeting state
+      const recommendedBudget = {
+        housing: 30,
+        savings: 20,
+        transportation: 15,
+        food: 12,
+        utilities: 8,
+        entertainment: 8,
+        other: 7
+      };
+      
+      const [income, setIncome] = useState(3000);
+      const [budgetAmounts, setBudgetAmounts] = useState({
+        housing: 900,
+        savings: 600,
+        transportation: 450,
+        food: 360,
+        utilities: 240,
+        entertainment: 240,
+        other: 210
+      });
+      
+      const resetBudget = () => {
+        setIncome(3000);
+        setBudgetAmounts({
+          housing: 900,
+          savings: 600,
+          transportation: 450,
+          food: 360,
+          utilities: 240,
+          entertainment: 240,
+          other: 210
+        });
+      };
+      
+      // Credit score state
+      const [creditFactors, setCreditFactors] = useState({
+        onTimePayments: 100,
+        creditUtilization: 30,
+        creditAge: 5,
+        newAccounts: 1
+      });
+      
+      // Investment state
+      const [investment, setInvestment] = useState({
+        initial: 5000,
+        monthly: 200,
+        years: 20,
+        returnRate: 7,
+        brokerageFee: 0.5,
+        contributionTiming: 'end' // 'start' or 'end' of month
+      });
+      
+      // Debt state
+      const [debt, setDebt] = useState({
+        balance: 10000,
+        interestRate: 18,
+        monthlyPayment: 300
+      });
+
+      const calculateBudget = () => {
+        const totalAmount = Object.values(budgetAmounts).reduce((sum, val) => sum + val, 0);
+        const totalPercent = income > 0 ? (totalAmount / income) * 100 : 0;
+        
+        const categories = Object.entries(budgetAmounts).map(([key, amount]) => ({
+          name: key,
+          amount,
+          percent: income > 0 ? (amount / income) * 100 : 0,
+          recommended: recommendedBudget[key]
+        }));
+        
+        // Add unallocated category if there's remaining income
+        const unallocatedAmount = Math.max(0, income - totalAmount);
+        if (unallocatedAmount > 0) {
+          categories.push({
+            name: 'unallocated',
+            amount: unallocatedAmount,
+            percent: income > 0 ? (unallocatedAmount / income) * 100 : 0,
+            recommended: 0
+          });
+        }
+        
+        return { categories, totalAmount, totalPercent };
+      };
+
+      const calculateCreditScore = () => {
+        let score = 300;
+        score += (creditFactors.onTimePayments / 100) * 350;
+        score += (1 - creditFactors.creditUtilization / 100) * 150;
+        score += Math.min(creditFactors.creditAge * 15, 90);
+        score -= creditFactors.newAccounts * 10;
+        return Math.round(Math.max(300, Math.min(850, score)));
+      };
+
+      const calculateInvestment = () => {
+        // Adjust return rate to account for annual brokerage fees
+        const netReturnRate = investment.returnRate - investment.brokerageFee;
+        const monthlyRate = netReturnRate / 100 / 12;
+        const months = investment.years * 12;
+        
+        // Calculate future value with net return (after fees)
+        // Base formula for end of period
+        let netValue = investment.initial * Math.pow(1 + monthlyRate, months) +
+          investment.monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+        
+        // If contributions are at start of period, multiply payment portion by (1 + r)
+        if (investment.contributionTiming === 'start') {
+          netValue = investment.initial * Math.pow(1 + monthlyRate, months) +
+            investment.monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
+        }
+        
+        // Calculate what it would have been without fees for comparison
+        const grossMonthlyRate = investment.returnRate / 100 / 12;
+        let grossValue = investment.initial * Math.pow(1 + grossMonthlyRate, months) +
+          investment.monthly * ((Math.pow(1 + grossMonthlyRate, months) - 1) / grossMonthlyRate);
+        
+        if (investment.contributionTiming === 'start') {
+          grossValue = investment.initial * Math.pow(1 + grossMonthlyRate, months) +
+            investment.monthly * ((Math.pow(1 + grossMonthlyRate, months) - 1) / grossMonthlyRate) * (1 + grossMonthlyRate);
+        }
+        
+        const totalContributed = investment.initial + investment.monthly * months;
+        const grossEarnings = grossValue - totalContributed;
+        const netEarnings = netValue - totalContributed;
+        const brokerageFees = grossValue - netValue;
+        
+        return { 
+          futureValue: grossValue,
+          totalContributed, 
+          earnings: grossEarnings, 
+          brokerageFees,
+          netValue,
+          netEarnings
+        };
+      };
+
+      const calculateDebtPayoff = () => {
+        const monthlyRate = debt.interestRate / 100 / 12;
+        let balance = debt.balance;
+        let months = 0;
+        let totalInterest = 0;
+        
+        while (balance > 0 && months < 600) {
+          const interestCharge = balance * monthlyRate;
+          totalInterest += interestCharge;
+          balance = balance + interestCharge - debt.monthlyPayment;
+          months++;
+          if (balance < 0) balance = 0;
+        }
+        
+        return { months, totalInterest, totalPaid: debt.balance + totalInterest };
+      };
+
+      const budgetData = calculateBudget();
+      const creditScore = calculateCreditScore();
+      const investmentData = calculateInvestment();
+      const debtData = calculateDebtPayoff();
+
+      const renderHome = () => (
+        <div className="home-section">
+          <div className="hero">
+            <div className="hero-content">
+              <h1>Master Your Money</h1>
+              <p className="hero-subtitle">Interactive simulations to build financial confidence</p>
+              <div className="hero-stats">
+                <div className="stat-item">
+                  <div className="stat-number">4</div>
+                  <div className="stat-label">Core Topics</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-number">100%</div>
+                  <div className="stat-label">Interactive</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-number">Free</div>
+                  <div className="stat-label">Always</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="topics-grid">
+            <div className="topic-card" onClick={() => setActiveSection('budget')}>
+              <div className="topic-icon">
+                <PiggyBank size={32} />
+              </div>
+              <h3>Budgeting</h3>
+              <p>Learn to allocate your income effectively with the 50/30/20 rule and beyond</p>
+              <div className="topic-arrow">
+                <ArrowRight size={20} />
+              </div>
+            </div>
+
+            <div className="topic-card" onClick={() => setActiveSection('credit')}>
+              <div className="topic-icon">
+                <CreditCard size={32} />
+              </div>
+              <h3>Credit Scores</h3>
+              <p>Understand what affects your credit and how to build excellent credit</p>
+              <div className="topic-arrow">
+                <ArrowRight size={20} />
+              </div>
+            </div>
+
+            <div className="topic-card" onClick={() => setActiveSection('investing')}>
+              <div className="topic-icon">
+                <TrendingUp size={32} />
+              </div>
+              <h3>Investing</h3>
+              <p>Discover the power of compound interest and long-term wealth building</p>
+              <div className="topic-arrow">
+                <ArrowRight size={20} />
+              </div>
+            </div>
+
+            <div className="topic-card" onClick={() => setActiveSection('debt')}>
+              <div className="topic-icon">
+                <DollarSign size={32} />
+              </div>
+              <h3>Debt Management</h3>
+              <p>Create a strategy to eliminate debt and save on interest payments</p>
+              <div className="topic-arrow">
+                <ArrowRight size={20} />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderBudget = () => (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Budget Simulator</h2>
+            <p>Adjust your monthly income and see how different allocation strategies affect your finances</p>
+          </div>
+
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              {/* Header Section */}
+              <div className="budget-header-section">
+                <div className="control-group income-control">
+                  <label>Monthly Income</label>
+                  <input
+                    type="number"
+                    value={income}
+                    onChange={(e) => setIncome(Number(e.target.value) || 0)}
+                    className="input-box income-input"
+                  />
+                </div>
+
+                {budgetData.totalPercent > 100 && (
+                  <div className="warning-box">
+                    ⚠️ Over budget by ${(budgetData.totalAmount - income).toLocaleString()}!
+                  </div>
+                )}
+                {budgetData.totalPercent < 100 && budgetData.totalPercent !== 100 && (
+                  <div className="info-box">
+                    ${(income - budgetData.totalAmount).toLocaleString()} unallocated ({(100 - budgetData.totalPercent).toFixed(1)}%)
+                  </div>
+                )}
+                {budgetData.totalPercent === 100 && (
+                  <div className="success-box">
+                    <Check size={18} /> Budget balanced!
+                  </div>
+                )}
+
+                <div className="budget-total">
+                  <span>Total Spending:</span>
+                  <span className={budgetData.totalPercent <= 100 ? 'total-good' : 'total-bad'}>
+                    ${budgetData.totalAmount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <h3>Adjust Your Budget</h3>
+              
+              {/* Category Input Boxes */}
+              {budgetData.categories.filter(cat => cat.name !== 'unallocated').map((cat) => (
+                <div key={cat.name} className="control-group">
+                  <label>
+                    <span className="category-icon">
+                      {cat.name === 'housing' && '🏠'}
+                      {cat.name === 'savings' && '💰'}
+                      {cat.name === 'transportation' && '🚗'}
+                      {cat.name === 'food' && '🍽️'}
+                      {cat.name === 'utilities' && '💡'}
+                      {cat.name === 'entertainment' && '🎬'}
+                      {cat.name === 'other' && '📦'}
+                    </span>
+                    {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                  </label>
+                  <input
+                    type="number"
+                    value={cat.amount}
+                    onChange={(e) => setBudgetAmounts({
+                      ...budgetAmounts,
+                      [cat.name]: Number(e.target.value) || 0
+                    })}
+                    className="input-box"
+                  />
+                  <div className="budget-slider-values">
+                    <span className="budget-recommended-inline">(rec: {cat.recommended}%; ${Math.round((income * cat.recommended) / 100).toLocaleString()})</span>
+                  </div>
+                  <div className="budget-comparison">
+                    {cat.percent > cat.recommended + 5 ? (
+                      <span className="comparison-high">↑ {(cat.percent - cat.recommended).toFixed(1)}% above</span>
+                    ) : cat.percent < cat.recommended - 5 ? (
+                      <span className="comparison-low">↓ {(cat.recommended - cat.percent).toFixed(1)}% below</span>
+                    ) : (
+                      <span className="comparison-good">✓ Close to recommended</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Unallocated Input - only shows if there's remaining budget */}
+              {(() => {
+                const unallocatedCat = budgetData.categories.find(cat => cat.name === 'unallocated');
+                if (!unallocatedCat) return null;
+                
+                return (
+                  <div className="control-group unallocated-control">
+                    <label>
+                      <span className="category-icon">❓</span>
+                      Unallocated
+                    </label>
+                    <input
+                      type="number"
+                      value={unallocatedCat.amount}
+                      disabled
+                      className="input-box unallocated-input"
+                    />
+                    <div className="budget-slider-values">
+                      <span className="budget-recommended-inline">(remaining from income)</span>
+                    </div>
+                    <div className="budget-comparison">
+                      <span className="comparison-info">💡 Allocate to savings or other categories</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <button className="reset-button" onClick={resetBudget}>
+                Reset to Recommended
+              </button>
+            </div>
+
+            <div className="results-panel">
+              {/* Pie Chart */}
+              <div className="pie-chart-container">
+                <h3>Budget Allocation</h3>
+                <svg viewBox="0 0 200 200" className="pie-chart">
+                  {(() => {
+                    let cumulativePercent = 0;
+                    const colors = {
+                      housing: '#60a5fa',
+                      savings: '#10b981',
+                      transportation: '#8b5cf6',
+                      food: '#f59e0b',
+                      utilities: '#ef4444',
+                      entertainment: '#ec4899',
+                      other: '#64748b',
+                      unallocated: '#cbd5e1'
+                    };
+                    
+                    return budgetData.categories.map((cat) => {
+                      const [startX, startY] = getCoordinatesForPercent(cumulativePercent);
+                      cumulativePercent += cat.percent / 100;
+                      const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
+                      const largeArcFlag = cat.percent > 50 ? 1 : 0;
+                      
+                      const pathData = [
+                        `M 100 100`,
+                        `L ${startX} ${startY}`,
+                        `A 80 80 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+                        `Z`
+                      ].join(' ');
+                      
+                      return (
+                        <path
+                          key={cat.name}
+                          d={pathData}
+                          fill={colors[cat.name]}
+                          opacity="0.9"
+                          stroke="white"
+                          strokeWidth="2"
+                        />
+                      );
+                    });
+                    
+                    function getCoordinatesForPercent(percent) {
+                      const x = 100 + 80 * Math.cos(2 * Math.PI * (percent - 0.25));
+                      const y = 100 + 80 * Math.sin(2 * Math.PI * (percent - 0.25));
+                      return [x, y];
+                    }
+                  })()}
+                </svg>
+
+                {/* Legend */}
+                <div className="pie-legend">
+                  {budgetData.categories.map((cat) => (
+                    <div key={cat.name} className="legend-item">
+                      <span className="legend-color" style={{
+                        backgroundColor: {
+                          housing: '#60a5fa',
+                          savings: '#10b981',
+                          transportation: '#8b5cf6',
+                          food: '#f59e0b',
+                          utilities: '#ef4444',
+                          entertainment: '#ec4899',
+                          other: '#64748b',
+                          unallocated: '#cbd5e1'
+                        }[cat.name]
+                      }}></span>
+                      <span className="legend-icon">
+                        {cat.name === 'housing' && '🏠'}
+                        {cat.name === 'savings' && '💰'}
+                        {cat.name === 'transportation' && '🚗'}
+                        {cat.name === 'food' && '🍽️'}
+                        {cat.name === 'utilities' && '💡'}
+                        {cat.name === 'entertainment' && '🎬'}
+                        {cat.name === 'other' && '📦'}
+                        {cat.name === 'unallocated' && '❓'}
+                      </span>
+                      <span className="legend-label">{cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}</span>
+                      <span className="legend-value">${cat.amount.toLocaleString()} ({cat.percent.toFixed(1)}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Full-width footnotes sections below the two-column layout */}
+          <div className="budget-footnotes-section">
+            {budgetData.totalPercent > 100 && (
+              <div className="over-budget-summary">
+                <div className="over-budget-item">
+                  <span>Monthly Income:</span>
+                  <span className="positive">${income.toLocaleString()}</span>
+                </div>
+                <div className="over-budget-item">
+                  <span>Total Spending:</span>
+                  <span className="negative">-${budgetData.totalAmount.toLocaleString()}</span>
+                </div>
+                <div className="over-budget-item total">
+                  <span>Monthly Deficit:</span>
+                  <span className="deficit">-${(budgetData.totalAmount - income).toLocaleString()}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="insight-box">
+                  <h4>💡 Budget Insight</h4>
+              <p>
+                {budgetData.totalPercent > 100
+                  ? `You're overspending by ${(budgetData.totalPercent - 100).toFixed(1)}% of your income. Consider reducing discretionary spending.`
+                  : budgetData.totalPercent < 95
+                  ? `You're only allocating ${budgetData.totalPercent.toFixed(1)}% of your income. Consider adding the remaining ${(100 - budgetData.totalPercent).toFixed(1)}% to savings.`
+                  : (() => {
+                      const savingsPercent = budgetData.categories.find(c => c.name === 'savings')?.percent || 0;
+                      return savingsPercent >= 20 
+                        ? "Excellent! You're saving 20% or more, following the 50/30/20 rule."
+                        : savingsPercent >= 15
+                        ? "Great work! Consider pushing to 20% for even stronger financial resilience."
+                        : savingsPercent >= 10
+                        ? "Good start! Try to increase savings to 20% over time."
+                        : savingsPercent > 0
+                        ? "You're building the habit! Aim to gradually increase to 10-15%."
+                        : "Consider allocating at least 10-20% to savings for financial health.";
+                    })()}
+              </p>
+            </div>
+
+            <div className="footnotes-box">
+                    <h4>About Recommended Percentages</h4>
+                    <p>Our recommendations are based on widely-accepted budgeting guidelines:</p>
+                    <ul>
+                      <li><strong>Housing (30%):</strong> The traditional guideline suggests no more than 30% of gross income on housing costs (rent/mortgage, insurance, property taxes).</li>
+                      <li><strong>Savings (20%):</strong> From the popular 50/30/20 rule, which recommends 20% toward savings and debt repayment.</li>
+                      <li><strong>Transportation (15%):</strong> Industry standard suggesting 10-15% for car payments, insurance, gas, and maintenance.</li>
+                      <li><strong>Food (12%):</strong> USDA guidelines indicate 10-15% of income for groceries and dining.</li>
+                      <li><strong>Utilities (8%):</strong> Average household spending on electricity, water, gas, internet, and phone.</li>
+                      <li><strong>Entertainment (8%):</strong> Discretionary spending on recreation, subscriptions, and hobbies.</li>
+                      <li><strong>Other (7%):</strong> Miscellaneous expenses including clothing, personal care, and unexpected costs.</li>
+                    </ul>
+                    <p className="footnote-disclaimer">These are general guidelines. Your ideal budget may vary based on your location, lifestyle, income level, and financial goals.</p>
+                  </div>
+
+                  <div className="footnotes-box">
+                    <h4>Emergency Fund & Retirement Savings</h4>
+                    <p><strong>Emergency Fund ("Rainy Day" Savings):</strong></p>
+                    <ul>
+                      <li><strong>Minimum Goal:</strong> 3-6 months of essential expenses (housing, food, utilities, transportation)</li>
+                      <li><strong>Calculation Example:</strong> If your essential monthly expenses are $2,500, aim for $7,500-$15,000 in emergency savings</li>
+                      <li><strong>Higher Goals:</strong> 6-12 months recommended for self-employed, single-income households, or uncertain job markets</li>
+                      <li><strong>Where to Keep It:</strong> High-yield savings account (easy access, FDIC insured)</li>
+                    </ul>
+                    <p><strong>Retirement Savings (2026 Contribution Limits):</strong></p>
+                    <ul>
+                      <li><strong>Roth IRA:</strong> $7,000/year ($8,000 if age 50+) - Tax-free growth and withdrawals in retirement</li>
+                      <li><strong>Traditional IRA:</strong> $7,000/year ($8,000 if age 50+) - Tax-deductible contributions, taxed at withdrawal</li>
+                      <li><strong>401(k)/403(b):</strong> $23,500/year ($31,000 if age 50+) - Employer-sponsored, often with company match</li>
+                      <li><strong>General Rule:</strong> Aim to save 15% of gross income for retirement, including employer contributions</li>
+                      <li><strong>Starting Age Matters:</strong> Starting at 25 vs 35 can mean hundreds of thousands more in retirement due to compound interest</li>
+                    </ul>
+              <p className="footnote-disclaimer">Contribution limits are subject to income phase-outs for Roth IRAs. Consult IRS guidelines or a financial advisor for your specific situation.</p>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderCredit = () => {
+        const getCreditRating = (score) => {
+          if (score >= 800) return { rating: 'Exceptional', color: '#10b981' };
+          if (score >= 740) return { rating: 'Very Good', color: '#3b82f6' };
+          if (score >= 670) return { rating: 'Good', color: '#8b5cf6' };
+          if (score >= 580) return { rating: 'Fair', color: '#f59e0b' };
+          return { rating: 'Poor', color: '#ef4444' };
+        };
+
+        const rating = getCreditRating(creditScore);
+
+        return (
+          <div className="section-content">
+            <div className="section-header">
+              <h2>Credit Score Explorer</h2>
+              <p>Understand how different factors influence your credit score (300-850 range)</p>
+            </div>
+
+            <div className="simulator-layout">
+              <div className="controls-panel">
+                <div className="control-group">
+                  <label>On-Time Payments (35% impact)</label>
+                  <input
+                    type="number"
+                    value={creditFactors.onTimePayments}
+                    onChange={(e) => setCreditFactors({
+                      ...creditFactors,
+                      onTimePayments: Number(e.target.value) || 0
+                    })}
+                    className="input-box"
+                  />
+                  <div className="input-suffix">%</div>
+                </div>
+
+                <div className="control-group">
+                  <label>Credit Utilization (30% impact)</label>
+                  <input
+                    type="number"
+                    value={creditFactors.creditUtilization}
+                    onChange={(e) => setCreditFactors({
+                      ...creditFactors,
+                      creditUtilization: Number(e.target.value) || 0
+                    })}
+                    className="input-box"
+                  />
+                  <div className="input-suffix">%</div>
+                </div>
+
+                <div className="control-group">
+                  <label>Credit History Length (15% impact)</label>
+                  <input
+                    type="number"
+                    value={creditFactors.creditAge}
+                    onChange={(e) => setCreditFactors({
+                      ...creditFactors,
+                      creditAge: Number(e.target.value) || 0
+                    })}
+                    className="input-box"
+                  />
+                  <div className="input-suffix">years</div>
+                </div>
+
+                <div className="control-group">
+                  <label>Recent Credit Inquiries (10% impact)</label>
+                  <input
+                    type="number"
+                    value={creditFactors.newAccounts}
+                    onChange={(e) => setCreditFactors({
+                      ...creditFactors,
+                      newAccounts: Number(e.target.value) || 0
+                    })}
+                    className="input-box"
+                  />
+                  <div className="input-suffix">inquiries</div>
+                </div>
+              </div>
+
+              <div className="results-panel">
+                <div className="credit-score-display">
+                  <div className="score-circle" style={{ borderColor: rating.color }}>
+                    <div className="score-number" style={{ color: rating.color }}>
+                      {creditScore}
+                    </div>
+                    <div className="score-rating">{rating.rating}</div>
+                  </div>
+                </div>
+
+                <div className="credit-scale">
+                  <div className="scale-bar">
+                    <div 
+                      className="scale-marker" 
+                      style={{ 
+                        left: `${((creditScore - 300) / 550) * 100}%`,
+                        backgroundColor: rating.color
+                      }}
+                    />
+                  </div>
+                  <div className="scale-labels">
+                    <span>300</span>
+                    <span>500</span>
+                    <span>700</span>
+                    <span>850</span>
+                  </div>
+                </div>
+
+                <div className="insight-box">
+                  <h4>💡 Credit Insight</h4>
+                  <p>
+                    {creditFactors.creditUtilization > 30
+                      ? "High credit utilization hurts your score. Keep it under 30% for better results."
+                      : creditFactors.onTimePayments < 95
+                      ? "Payment history is crucial! Even one missed payment can significantly impact your score."
+                      : creditScore >= 740
+                      ? "Excellent! Your credit score qualifies you for the best interest rates and terms."
+                      : "You're building solid credit. Keep making on-time payments and maintaining low balances."}
+                  </p>
+                </div>
+
+                <div className="tips-box">
+                  <h4>Quick Tips</h4>
+                  <ul>
+                    <li>Pay bills on time - this is 35% of your score</li>
+                    <li>Keep credit card balances below 30% of limits</li>
+                    <li>Don't close old credit accounts</li>
+                    <li>Limit new credit applications</li>
+                  </ul>
+                </div>
+
+                <div className="footnotes-box">
+                  <h4>Credit Score Formula (Simplified)</h4>
+                  <p>This simulator uses a simplified credit score calculation:</p>
+                  <div className="formula-box">
+                    Score = 300 + (OnTimePayments% × 3.5) + ((1 - Utilization%) × 1.5) + min(CreditAge × 15, 90) - (NewAccounts × 10)
+                  </div>
+                  <p><strong>Where:</strong></p>
+                  <ul>
+                    <li>OnTimePayments% = Percentage of bills paid on time (0-100)</li>
+                    <li>Utilization% = Credit utilization ratio (0-100)</li>
+                    <li>CreditAge = Length of credit history in years</li>
+                    <li>NewAccounts = Number of recent credit inquiries</li>
+                  </ul>
+                  <p className="footnote-disclaimer">Real credit scores (FICO, VantageScore) use more complex proprietary algorithms with additional factors like credit mix and payment history detail.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const renderInvesting = () => (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Investment Growth Calculator</h2>
+            <p>See the power of compound interest and consistent investing over time</p>
+          </div>
+
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="control-group">
+                <label>Initial Investment</label>
+                <input
+                  type="number"
+                  value={investment.initial}
+                  onChange={(e) => setInvestment({
+                    ...investment,
+                    initial: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">$</div>
+              </div>
+
+              <div className="control-group">
+                <label>Monthly Contribution</label>
+                <input
+                  type="number"
+                  value={investment.monthly}
+                  onChange={(e) => setInvestment({
+                    ...investment,
+                    monthly: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">$</div>
+              </div>
+
+              <div className="control-group">
+                <label>Time Horizon</label>
+                <input
+                  type="number"
+                  value={investment.years}
+                  onChange={(e) => setInvestment({
+                    ...investment,
+                    years: Number(e.target.value) || 1
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">years</div>
+              </div>
+
+              <div className="control-group">
+                <label>Annual Return Rate</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={investment.returnRate}
+                  onChange={(e) => setInvestment({
+                    ...investment,
+                    returnRate: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">%</div>
+              </div>
+
+              <div className="control-group">
+                <label>Annual Brokerage Fee</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={investment.brokerageFee}
+                  onChange={(e) => setInvestment({
+                    ...investment,
+                    brokerageFee: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">%</div>
+              </div>
+
+              <div className="control-group">
+                <label>Contribution Timing</label>
+                <select
+                  value={investment.contributionTiming}
+                  onChange={(e) => setInvestment({
+                    ...investment,
+                    contributionTiming: e.target.value
+                  })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    fontSize: '0.875rem',
+                    borderRadius: '6px',
+                    border: '1px solid #cbd5e1',
+                    backgroundColor: 'white',
+                    color: '#1e293b',
+                    fontFamily: "'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif",
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="end">End of Month (Ordinary Annuity)</option>
+                  <option value="start">Start of Month (Annuity Due)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="results-panel">
+              <h3>Your Investment Projection</h3>
+              
+              <div className="investment-chart">
+                <div className="chart-title">Investment Growth Over {investment.years} Years</div>
+                <div className="chart-container">
+                  <div className="chart-y-axis">
+                    <div className="y-axis-label">${Math.round(investmentData.futureValue).toLocaleString()}</div>
+                    <div className="y-axis-label">${Math.round(investmentData.futureValue * 0.5).toLocaleString()}</div>
+                    <div className="y-axis-label">$0</div>
+                  </div>
+                  <div className="chart-bars">
+                    <div className="chart-bar contributed">
+                      <div 
+                        className="bar-fill"
+                        style={{ 
+                          height: `${(investmentData.totalContributed / investmentData.futureValue) * 100}%` 
+                        }}
+                      >
+                        <span className="bar-label">${investmentData.totalContributed.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                      </div>
+                      <div className="x-axis-label">Contributed</div>
+                    </div>
+                    <div className="chart-bar earnings">
+                      <div 
+                        className="bar-fill"
+                        style={{ 
+                          height: `${(investmentData.earnings / investmentData.futureValue) * 100}%` 
+                        }}
+                      >
+                        <span className="bar-label">${investmentData.earnings.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                      </div>
+                      <div className="x-axis-label">Earnings</div>
+                    </div>
+                    <div className="chart-bar fees">
+                      <div 
+                        className="bar-fill"
+                        style={{ 
+                          height: `${(investmentData.brokerageFees / investmentData.futureValue) * 100}%` 
+                        }}
+                      >
+                        <span className="bar-label">${investmentData.brokerageFees.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                      </div>
+                      <div className="x-axis-label">Fees</div>
+                    </div>
+                    <div className="chart-bar net">
+                      <div 
+                        className="bar-fill"
+                        style={{ 
+                          height: `${(investmentData.netValue / investmentData.futureValue) * 100}%` 
+                        }}
+                      >
+                        <span className="bar-label">${investmentData.netValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                      </div>
+                      <div className="x-axis-label">Net Value</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="insight-box">
+                <h4>💡 Investment Insight</h4>
+                <p>
+                  Over {investment.years} years, you'd earn{' '}
+                  <strong>
+                    ${investmentData.earnings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </strong>
+                  {' '}from compound interest - that's{' '}
+                  <strong>
+                    {((investmentData.earnings / investmentData.totalContributed) * 100).toFixed(0)}%
+                  </strong>
+                  {' '}growth on your contributions! Starting early makes a massive difference.
+                </p>
+              </div>
+
+              <div className="footnotes-box">
+                <h4>Compound Interest Formula (With Brokerage Fees)</h4>
+                <p>This calculator uses the future value of a series formula with fees:</p>
+                <div className="formula-box">
+                  <strong>End of Month (Ordinary Annuity):</strong><br/>
+                  FV = P(1 + r_net)^n + PMT × [((1 + r_net)^n - 1) / r_net]<br/>
+                  <br/>
+                  <strong>Start of Month (Annuity Due):</strong><br/>
+                  FV = P(1 + r_net)^n + PMT × [((1 + r_net)^n - 1) / r_net] × (1 + r_net)<br/>
+                  <br/>
+                  Where r_net = (Return Rate - Fee Rate) / 12
+                </div>
+                <p><strong>Variables:</strong></p>
+                <ul>
+                  <li><strong>FV</strong> = Net Future Value (after fees)</li>
+                  <li><strong>P</strong> = Initial principal (starting investment)</li>
+                  <li><strong>r_net</strong> = Net monthly return rate (return - fees, then ÷ 12)</li>
+                  <li><strong>n</strong> = Total number of months (years × 12)</li>
+                  <li><strong>PMT</strong> = Monthly contribution amount</li>
+                </ul>
+                <p><strong>Example:</strong> $5,000 initial + $200/month at 7% return with 0.5% annual fee for 20 years:</p>
+                <div className="formula-box">
+                  Net annual return = 7% - 0.5% = 6.5%<br/>
+                  r_net = 6.5% ÷ 12 = 0.00542<br/>
+                  n = 20 × 12 = 240 months<br/>
+                  <br/>
+                  <strong>End of Month:</strong><br/>
+                  FV = 5000(1.00542)^240 + 200 × [((1.00542)^240 - 1) / 0.00542]<br/>
+                  FV ≈ $18,379 + $96,787 = $115,166<br/>
+                  <br/>
+                  <strong>Start of Month:</strong><br/>
+                  FV = 5000(1.00542)^240 + 200 × [((1.00542)^240 - 1) / 0.00542] × 1.00542<br/>
+                  FV ≈ $18,379 + $97,311 = $115,690<br/>
+                  <br/>
+                  Difference: $524 more with start-of-month contributions
+                </div>
+                <p><strong>Key Insights:</strong></p>
+                <ul>
+                  <li>Brokerage fees reduce your effective return rate each year, compounding the negative impact over time</li>
+                  <li>Contributing at the start of the month gives each payment an extra month to grow</li>
+                  <li>Most 401(k)s and automated investments use end-of-month (ordinary annuity)</li>
+                  <li>Manual contributions can be made at month start for slightly better returns</li>
+                </ul>
+                <p className="footnote-disclaimer">This assumes constant fees and returns compounded monthly. Real investment returns vary and are not guaranteed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderDebt = () => (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Debt Payoff Simulator</h2>
+            <p>Calculate how long it will take to pay off debt and how much interest you'll pay</p>
+          </div>
+
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="control-group">
+                <label>Current Balance</label>
+                <input
+                  type="number"
+                  value={debt.balance}
+                  onChange={(e) => setDebt({
+                    ...debt,
+                    balance: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">$</div>
+              </div>
+
+              <div className="control-group">
+                <label>Annual Interest Rate</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={debt.interestRate}
+                  onChange={(e) => setDebt({
+                    ...debt,
+                    interestRate: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">%</div>
+              </div>
+
+              <div className="control-group">
+                <label>Monthly Payment</label>
+                <input
+                  type="number"
+                  value={debt.monthlyPayment}
+                  onChange={(e) => setDebt({
+                    ...debt,
+                    monthlyPayment: Number(e.target.value) || 0
+                  })}
+                  className="input-box"
+                />
+                <div className="input-suffix">$</div>
+              </div>
+
+              {debt.monthlyPayment <= (debt.balance * debt.interestRate / 100 / 12) && (
+                <div className="warning-box">
+                  ⚠️ Payment too low! Must exceed monthly interest charge.
+                </div>
+              )}
+            </div>
+
+            <div className="results-panel">
+              <h3>Payoff Timeline</h3>
+              
+              {debt.monthlyPayment > (debt.balance * debt.interestRate / 100 / 12) ? (
+                <>
+                  <div className="debt-summary">
+                    <div className="summary-item primary">
+                      <div className="summary-label">Time to Payoff</div>
+                      <div className="summary-value large">
+                        {Math.floor(debtData.months / 12)} years {debtData.months % 12} months
+                      </div>
+                      <div className="summary-sublabel">
+                        {(() => {
+                          const currentDate = new Date();
+                          const payoffDate = new Date(currentDate);
+                          payoffDate.setMonth(payoffDate.getMonth() + debtData.months);
+                          return `Paid off by: ${payoffDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="debt-chart">
+                    <div className="chart-title">Debt Payoff Breakdown</div>
+                    <div className="chart-container">
+                      <div className="chart-y-axis">
+                        <div className="y-axis-label">${Math.round(debtData.totalPaid).toLocaleString()}</div>
+                        <div className="y-axis-label">${Math.round(debtData.totalPaid * 0.5).toLocaleString()}</div>
+                        <div className="y-axis-label">$0</div>
+                      </div>
+                      <div className="chart-bars">
+                        <div className="chart-bar principal">
+                          <div 
+                            className="bar-fill"
+                            style={{ 
+                              height: `${(debt.balance / debtData.totalPaid) * 100}%` 
+                            }}
+                          >
+                            <span className="bar-label">${debt.balance.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                          </div>
+                          <div className="x-axis-label">Principal</div>
+                        </div>
+                        <div className="chart-bar interest">
+                          <div 
+                            className="bar-fill"
+                            style={{ 
+                              height: `${(debtData.totalInterest / debtData.totalPaid) * 100}%` 
+                            }}
+                          >
+                            <span className="bar-label">${debtData.totalInterest.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                          </div>
+                          <div className="x-axis-label">Interest</div>
+                        </div>
+                        <div className="chart-bar total">
+                          <div 
+                            className="bar-fill"
+                            style={{ 
+                              height: `100%` 
+                            }}
+                          >
+                            <span className="bar-label">${debtData.totalPaid.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                          </div>
+                          <div className="x-axis-label">Total</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="insight-box">
+                    <h4>💡 Debt Insight</h4>
+                    <p>
+                      You'll pay <strong>${debtData.totalInterest.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
+                      {' '}in interest - that's{' '}
+                      <strong>{((debtData.totalInterest / debt.balance) * 100).toFixed(0)}%</strong>
+                      {' '}of your original balance. Increasing your monthly payment by just $50-100 can save
+                      you thousands in interest and years of payments!
+                    </p>
+                  </div>
+
+                  <div className="comparison-box">
+                    <h4>What if you paid more?</h4>
+                    {[50, 100, 200].map(extra => {
+                      const newPayment = debt.monthlyPayment + extra;
+                      let balance = debt.balance;
+                      let months = 0;
+                      let interest = 0;
+                      const rate = debt.interestRate / 100 / 12;
+                      
+                      while (balance > 0 && months < 600) {
+                        const interestCharge = balance * rate;
+                        interest += interestCharge;
+                        balance = balance + interestCharge - newPayment;
+                        months++;
+                        if (balance < 0) balance = 0;
+                      }
+                      
+                      return (
+                        <div key={extra} className="comparison-item">
+                          <span>+${extra}/month:</span>
+                          <span>Save ${(debtData.totalInterest - interest).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                          <span>({debtData.months - months} months faster)</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="footnotes-box">
+                    <h4>Debt Payoff Formula</h4>
+                    <p>This calculator simulates month-by-month debt reduction:</p>
+                    <div className="formula-box">
+                      Each month: NewBalance = OldBalance + (OldBalance × r) - Payment<br/>
+                      Where r = Annual Interest Rate ÷ 12
+                    </div>
+                    <p><strong>Variables:</strong></p>
+                    <ul>
+                      <li><strong>Balance</strong> = Current debt amount</li>
+                      <li><strong>r</strong> = Monthly interest rate (annual rate ÷ 12 ÷ 100)</li>
+                      <li><strong>Payment</strong> = Fixed monthly payment</li>
+                    </ul>
+                    <p><strong>Example:</strong> $10,000 debt at 18% APR with $300/month payment:</p>
+                    <div className="formula-box">
+                      r = 18% ÷ 12 ÷ 100 = 0.015<br/>
+                      Month 1: Interest = $10,000 × 0.015 = $150<br/>
+                      Month 1: New Balance = $10,000 + $150 - $300 = $9,850<br/>
+                      Month 2: Interest = $9,850 × 0.015 = $147.75<br/>
+                      Month 2: New Balance = $9,850 + $147.75 - $300 = $9,697.75<br/>
+                      ...continues until balance = $0
+                    </div>
+                    <p className="footnote-disclaimer">This calculation assumes fixed monthly payments and compound interest. Actual payoff may vary with variable rates or payment amounts.</p>
+                  </div>
+                </>
+              ) : (
+                <div className="warning-box large">
+                  Your monthly payment must be higher than the monthly interest charge to make progress on your debt.
+                  Minimum payment needed: ${Math.ceil(debt.balance * debt.interestRate / 100 / 12)}/month
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="app">
+          <nav className="navbar">
+            <div className="nav-brand" onClick={() => setActiveSection('home')}>
+              <DollarSign size={24} />
+              <div className="nav-brand-text">
+                <span className="nav-brand-title">FinLit</span>
+                <span className="nav-brand-subtitle">Vibe coded by B. Wright & Claude, 2-16-2026</span>
+              </div>
+            </div>
+            <div className="nav-links">
+              <button 
+                className={activeSection === 'budget' ? 'active' : ''}
+                onClick={() => setActiveSection('budget')}
+              >
+                Budgeting
+              </button>
+              <button 
+                className={activeSection === 'credit' ? 'active' : ''}
+                onClick={() => setActiveSection('credit')}
+              >
+                Credit
+              </button>
+              <button 
+                className={activeSection === 'investing' ? 'active' : ''}
+                onClick={() => setActiveSection('investing')}
+              >
+                Investing
+              </button>
+              <button 
+                className={activeSection === 'debt' ? 'active' : ''}
+                onClick={() => setActiveSection('debt')}
+              >
+                Debt
+              </button>
+            </div>
+          </nav>
+
+          <main className="main-content">
+            {activeSection === 'home' && renderHome()}
+            {activeSection === 'budget' && renderBudget()}
+            {activeSection === 'credit' && renderCredit()}
+            {activeSection === 'investing' && renderInvesting()}
+            {activeSection === 'debt' && renderDebt()}
+          </main>
+        </div>
+      );
+    }
+
+    // Render the app
+    const root = createRoot(document.getElementById('root'));
+    root.render(<FinancialLiteracyApp />);
+  </script>
+</body>
+</html>
 
