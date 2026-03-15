@@ -167,44 +167,6 @@
             font-weight: bold;
         }
 
-        #location-list {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: var(--background-color);
-            border-radius: 10px;
-            text-align: left;
-            max-height: 180px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .location-chips {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .location-chip {
-            background-color: #e0e0e0;
-            padding: 6px 10px;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            margin: 2px;
-            display: inline-block;
-        }
-
-        .toggle-list {
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 0.9rem;
-            padding: 6px 12px;
-        }
-
-        .toggle-list:hover {
-            background-color: var(--secondary-color);
-        }
-
         #completion-message {
             display: none;
             margin-top: 20px;
@@ -222,14 +184,6 @@
 
         .hidden {
             display: none;
-        }
-
-        .quiz-controls-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
         }
 
         .quiz-layout {
@@ -417,15 +371,6 @@
                     <p class="scoring-note">Scoring: exact = Correct &nbsp;|&nbsp; ≥75% similar = Close (½ pt) &nbsp;|&nbsp; else Incorrect. Accuracy is weighted.</p>
                 </div>
             </div>
-
-            <div class="quiz-controls-row">
-                <button id="toggle-locations" class="toggle-list">Show/Hide Location List</button>
-            </div>
-
-            <div id="location-list">
-                <h3>All Locations (Alphabetically Sorted):</h3>
-                <div class="location-chips" id="location-chips"></div>
-            </div>
         </div>
 
         <div id="completion-message">
@@ -585,7 +530,7 @@
             document.getElementById("completion-message").style.display = "none";
 
             updateScoreDisplay();
-            populateLocationList();
+            populateDatalist();
             showCurrentLocation();
         }
 
@@ -658,29 +603,14 @@
             document.getElementById("accuracy-percentage").textContent = `${accuracyPercentage}%`;
         }
 
-        function populateLocationList() {
-            const chipContainer = document.getElementById("location-chips");
-            chipContainer.innerHTML = "";
+        function populateDatalist() {
             const datalist = document.getElementById("locations-datalist");
             datalist.innerHTML = "";
-
-            const sortedLocations = [...locations].sort((a, b) => a.Name.localeCompare(b.Name));
-            sortedLocations.forEach(location => {
-                const chip = document.createElement("span");
-                chip.className = "location-chip";
-                chip.textContent = location.Name;
-                chipContainer.appendChild(chip);
-
+            [...locations].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(location => {
                 const option = document.createElement("option");
                 option.value = location.Name;
                 datalist.appendChild(option);
             });
-        }
-
-        function toggleLocationList() {
-            const locationList = document.getElementById("location-list");
-            const isVisible = locationList.style.display === "block";
-            locationList.style.display = isVisible ? "none" : "block";
         }
 
         function levenshteinDistance(a, b) {
@@ -782,14 +712,11 @@
         }
 
         window.addEventListener("load", function () {
-            document.getElementById("location-list").style.display = "none";
-
             document.getElementById("start-button").addEventListener("click", startQuiz);
             document.getElementById("restart-button").addEventListener("click", startQuiz);
             document.getElementById("answer-form").addEventListener("submit", checkGuess);
             document.getElementById("next-button").addEventListener("click", nextLocation);
             document.getElementById("skip-button").addEventListener("click", skipQuestion);
-            document.getElementById("toggle-locations").addEventListener("click", toggleLocationList);
 
             // Image loading indicator
             const img = document.getElementById("locationImage");
