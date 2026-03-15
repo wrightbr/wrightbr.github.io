@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stats Basics</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Charter', 'Georgia', serif; background: #f0fdf4; }
+    #root { width: 100%; min-height: 100vh; }
+
+    .app { min-height: 100vh; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); color: #1e293b; }
+
+    .navbar {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(13,148,136,0.15);
+      padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.75rem; cursor: pointer;
+      color: #0d9488;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: -0.03em; text-decoration: none;
+    }
+    .nav-brand-symbol { font-size: 2rem; font-weight: 300; line-height: 1; }
+    .nav-brand-title { font-size: 1.375rem; font-weight: 700; line-height: 1; }
+    .nav-brand-subtitle { font-size: 0.6rem; font-weight: 400; color: #64748b; font-style: italic; line-height: 1; }
+    .nav-links { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+    .nav-links button {
+      background: transparent; border: none; color: #64748b;
+      padding: 0.4rem 0.75rem; border-radius: 7px; cursor: pointer;
+      font-size: 0.8125rem;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 500; transition: all 0.2s;
+    }
+    .nav-links button:hover { background: rgba(13,148,136,0.08); color: #1e293b; }
+    .nav-links button.active { background: #0d9488; color: white; }
+
+    .main-content { max-width: 1400px; margin: 0 auto; padding: 1.25rem; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .home-section, .section-content { animation: fadeIn 0.45s ease-out; }
+
+    .hero { text-align: center; padding: 3.5rem 2rem 3rem; }
+    .hero h1 {
+      font-size: 3.5rem; font-weight: 700; margin-bottom: 0.875rem;
+      background: linear-gradient(135deg, #0f766e 0%, #059669 60%, #0d9488 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      letter-spacing: -0.04em;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .hero-subtitle { font-size: 1.25rem; color: #475569; margin-bottom: 2.5rem; }
+    .hero-stats { display: flex; justify-content: center; gap: 4rem; }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.5rem; font-weight: 700; color: #0d9488; margin-bottom: 0.25rem; font-family: 'SF Pro Display', -apple-system, sans-serif; }
+    .stat-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+
+    .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .topic-card {
+      background: white; border: 1px solid #cbd5e1; border-radius: 16px;
+      padding: 2rem; cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .topic-card:hover { transform: translateY(-6px); border-color: rgba(13,148,136,0.35); box-shadow: 0 12px 24px rgba(13,148,136,0.12); }
+    .topic-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, #0d9488, #059669);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.125rem; font-size: 1.5rem;
+    }
+    .topic-card h3 { font-size: 1.375rem; margin-bottom: 0.625rem; color: #1e293b; font-weight: 600; letter-spacing: -0.02em; font-family: 'SF Pro Display', -apple-system, sans-serif; }
+    .topic-card p { color: #475569; line-height: 1.6; margin-bottom: 1rem; font-size: 0.9rem; }
+    .topic-arrow { color: #0d9488; font-weight: 600; font-size: 0.9rem; transition: transform 0.2s; display: inline-block; }
+    .topic-card:hover .topic-arrow { transform: translateX(5px); }
+
+    .section-header { text-align: center; margin-bottom: 1rem; }
+    .section-header h2 { font-size: 1.5rem; font-weight: 600; color: #1e293b; letter-spacing: -0.03em; font-family: 'SF Pro Display', -apple-system, sans-serif; margin-bottom: 0.25rem; }
+    .section-header p { font-size: 0.8125rem; color: #475569; max-width: 620px; margin: 0 auto; }
+
+    .simulator-layout {
+      display: flex; gap: 1.25rem;
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 1.25rem; min-height: 500px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .controls-panel {
+      width: 270px; flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 0.875rem;
+      overflow-y: auto; padding-right: 0.375rem;
+    }
+    .controls-panel::-webkit-scrollbar { width: 4px; }
+    .controls-panel::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 2px; }
+    .controls-panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+    .results-panel { flex: 1; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; min-width: 0; }
+
+    .control-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .control-group label { font-size: 0.75rem; font-weight: 600; color: #374151; }
+    .control-group select, .control-group input[type="number"] {
+      border: 1px solid #d1d5db; border-radius: 6px; padding: 0.35rem 0.5rem;
+      font-size: 0.8125rem; color: #1e293b; background: white;
+    }
+    .control-group select:focus, .control-group input[type="number"]:focus { outline: none; border-color: #0d9488; }
+
+    .slider-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .slider-row { display: flex; justify-content: space-between; align-items: center; }
+    .slider-row span { font-size: 0.75rem; font-weight: 600; color: #374151; }
+    .slider-value { font-size: 0.8125rem; font-weight: 700; color: #0d9488; min-width: 36px; text-align: right; }
+    input[type="range"] { width: 100%; accent-color: #0d9488; cursor: pointer; }
+
+    .btn {
+      padding: 0.45rem 0.9rem; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 0.8125rem; font-weight: 600; transition: all 0.18s;
+      font-family: 'SF Pro Text', -apple-system, sans-serif;
+    }
+    .btn-primary { background: #0d9488; color: white; }
+    .btn-primary:hover { background: #0f766e; transform: translateY(-1px); }
+    .btn-secondary { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: #fff1f2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+    .btn-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 0.6rem; text-align: center; }
+    .stat-box-value { font-size: 1.125rem; font-weight: 700; color: #0d9488; font-family: 'SF Pro Display', -apple-system, sans-serif; }
+    .stat-box-label { font-size: 0.625rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 0.1rem; }
+
+    .chart-container { background: #fafafa; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.875rem; }
+    .chart-title { font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; text-align: center; }
+
+    .info-card { background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 0.75rem; }
+    .info-card p { font-size: 0.78rem; color: #0f766e; line-height: 1.55; }
+    .info-card strong { color: #0d9488; }
+
+    .formula-box {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 0.6rem;
+      font-family: 'Courier New', monospace; font-size: 0.78rem; color: #374151; text-align: center; line-height: 1.6;
+    }
+
+    .divider { height: 1px; background: #f1f5f9; margin: 0.125rem 0; flex-shrink: 0; }
+    .section-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; }
+
+    @media (max-width: 800px) {
+      .simulator-layout { flex-direction: column; }
+      .controls-panel { width: 100%; }
+      .hero h1 { font-size: 2.25rem; }
+      .hero-stats { gap: 2rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo } = React;
+
+    // ── Math utilities ─────────────────────────────────────────────────────────
+
+    function randNormal(mean = 0, std = 1) {
+      let u, v;
+      do { u = Math.random(); } while (u === 0);
+      do { v = Math.random(); } while (v === 0);
+      return mean + std * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+
+    function randUniform(min, max) { return min + Math.random() * (max - min); }
+
+    function randExponential(mean) {
+      let u;
+      do { u = Math.random(); } while (u === 0);
+      return -mean * Math.log(u);
+    }
+
+    function randRightSkewed(mean, std) {
+      // Sum of two exponentials, shifted to target mean/std
+      const x = randExponential(1) + randExponential(1); // chi-sq(2)-like, mean=2
+      return mean + (x - 2) * (std / Math.sqrt(2));
+    }
+
+    function generateSample(distType, mean, std, n) {
+      const out = [];
+      for (let i = 0; i < n; i++) {
+        switch (distType) {
+          case 'normal':
+            out.push(randNormal(mean, std)); break;
+          case 'uniform': {
+            const hw = std * Math.sqrt(3);
+            out.push(randUniform(mean - hw, mean + hw)); break;
+          }
+          case 'exponential':
+            out.push(randExponential(std)); break;
+          case 'skewed':
+            out.push(randRightSkewed(mean, std)); break;
+          default:
+            out.push(randNormal(mean, std));
+        }
+      }
+      return out;
+    }
+
+    function sampleStats(data) {
+      const n = data.length;
+      if (n === 0) return { mean: 0, std: 0, median: 0, n: 0, min: 0, max: 0 };
+      const mean = data.reduce((a, b) => a + b, 0) / n;
+      const sorted = [...data].sort((a, b) => a - b);
+      const median = n % 2 === 0 ? (sorted[n/2-1] + sorted[n/2]) / 2 : sorted[Math.floor(n/2)];
+      const variance = n > 1 ? data.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1) : 0;
+      return { mean, std: Math.sqrt(variance), median, n, min: sorted[0], max: sorted[n-1] };
+    }
+
+    function makeHistBins(data, nBins = 25) {
+      if (data.length < 2) return [];
+      const min = Math.min(...data), max = Math.max(...data);
+      if (min === max) return [];
+      const bw = (max - min) / nBins;
+      const bins = Array.from({ length: nBins }, (_, i) => ({ x0: min + i*bw, x1: min + (i+1)*bw, count: 0 }));
+      data.forEach(v => {
+        const idx = Math.min(Math.floor((v - min) / bw), nBins - 1);
+        bins[idx].count++;
+      });
+      return bins;
+    }
+
+    function normalPDF(x, mu, sigma) {
+      return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+    }
+
+    // Abramowitz & Stegun approximation — max error ~7.5e-8
+    function normalCDF(x) {
+      const t = 1 / (1 + 0.2316419 * Math.abs(x));
+      const poly = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+      const p = 1 - normalPDF(x, 0, 1) * poly;
+      return x >= 0 ? p : 1 - p;
+    }
+
+    function zCritical(alpha, tails) {
+      // alpha is the full significance level (e.g. 0.05)
+      const p = tails === 'two' ? 1 - alpha / 2 : 1 - alpha;
+      // Solve normalCDF(z) = p via binary search
+      let lo = 0, hi = 5;
+      for (let i = 0; i < 60; i++) {
+        const mid = (lo + hi) / 2;
+        if (normalCDF(mid) < p) lo = mid; else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+
+    function generateCorrelatedData(r, n, muX = 50, sdX = 15, sdY = 15) {
+      const pts = [];
+      for (let i = 0; i < n; i++) {
+        const x = randNormal(muX, sdX);
+        const y = r * (x - muX) / sdX * sdY + muX + Math.sqrt(1 - r*r) * randNormal(0, sdY);
+        pts.push({ x, y });
+      }
+      return pts;
+    }
+
+    // ── SVG Histogram ──────────────────────────────────────────────────────────
+    // Uses fixed viewBox so it scales responsively with width="100%"
+
+    function SVGHistogram({ data, color = '#0d9488', title, overlayNormal = false, height = 180, xLabel = '' }) {
+      const VW = 500, VH = height;
+      const pad = { t: title ? 22 : 10, r: 10, b: xLabel ? 32 : 22, l: 38 };
+      const iW = VW - pad.l - pad.r;
+      const iH = VH - pad.t - pad.b;
+
+      if (!data || data.length < 2) {
+        return (
+          <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+            <text x={VW/2} y={VH/2} textAnchor="middle" fontSize={11} fill="#94a3b8">No data yet</text>
+          </svg>
+        );
+      }
+
+      const bins = makeHistBins(data, 25);
+      if (!bins.length) return null;
+      const maxCount = Math.max(...bins.map(b => b.count));
+      const dMin = bins[0].x0, dMax = bins[bins.length-1].x1, dRange = dMax - dMin || 1;
+      const xS = v => ((v - dMin) / dRange) * iW;
+      const yS = v => iH - (v / (maxCount * 1.08)) * iH;
+
+      // Normal overlay curve
+      let curvePts = '';
+      if (overlayNormal && data.length > 10) {
+        const st = sampleStats(data);
+        const binWidth = dRange / 25;
+        curvePts = Array.from({ length: 80 }, (_, i) => {
+          const x = dMin + (i / 79) * dRange;
+          const scaledDensity = normalPDF(x, st.mean, st.std) * binWidth * data.length;
+          return `${xS(x).toFixed(1)},${yS(scaledDensity).toFixed(1)}`;
+        }).join(' ');
+      }
+
+      const nTicks = 4;
+      return (
+        <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+          <g transform={`translate(${pad.l},${pad.t})`}>
+            {title && <text x={iW/2} y={-6} textAnchor="middle" fontSize={10} fill="#374151" fontWeight={600}>{title}</text>}
+            {[0.25, 0.5, 0.75, 1].map(f => (
+              <line key={f} x1={0} y1={yS(maxCount*f)} x2={iW} y2={yS(maxCount*f)} stroke="#f1f5f9" strokeWidth={1} />
+            ))}
+            {bins.map((b, i) => {
+              const bx = xS(b.x0), bw = xS(b.x1) - xS(b.x0);
+              return <rect key={i} x={bx+0.5} y={yS(b.count)} width={Math.max(bw-1, 0.5)} height={iH - yS(b.count)} fill={color} opacity={0.75} rx={1} />;
+            })}
+            {overlayNormal && curvePts && (
+              <polyline points={curvePts} fill="none" stroke="#475569" strokeWidth={1.5} strokeDasharray="3,2" opacity={0.65} />
+            )}
+            <line x1={0} y1={iH} x2={iW} y2={iH} stroke="#94a3b8" strokeWidth={1} />
+            <line x1={0} y1={0} x2={0} y2={iH} stroke="#94a3b8" strokeWidth={1} />
+            {Array.from({ length: nTicks+1 }, (_, i) => {
+              const v = dMin + (i/nTicks) * dRange;
+              const x = xS(v);
+              return (
+                <g key={i}>
+                  <line x1={x} y1={iH} x2={x} y2={iH+4} stroke="#94a3b8" strokeWidth={1} />
+                  <text x={x} y={iH+14} textAnchor="middle" fontSize={9} fill="#94a3b8">{v.toFixed(1)}</text>
+                </g>
+              );
+            })}
+            {xLabel && <text x={iW/2} y={iH+28} textAnchor="middle" fontSize={9} fill="#94a3b8">{xLabel}</text>}
+          </g>
+        </svg>
+      );
+    }
+
+    // ── Distributions ──────────────────────────────────────────────────────────
+
+    function DistributionsSection() {
+      const [distType, setDistType] = useState('normal');
+      const [mean, setMean] = useState(50);
+      const [std, setStd] = useState(10);
+      const [n, setN] = useState(500);
+      const [data, setData] = useState(() => generateSample('normal', 50, 10, 500));
+
+      const resample = useCallback(() => {
+        setData(generateSample(distType, mean, std, n));
+      }, [distType, mean, std, n]);
+
+      useEffect(() => { resample(); }, [distType, mean, std, n]);
+
+      const stats = useMemo(() => sampleStats(data), [data]);
+
+      const skewness = useMemo(() => {
+        if (stats.n < 3 || stats.std === 0) return 0;
+        return data.reduce((a, b) => a + ((b - stats.mean) / stats.std) ** 3, 0) / stats.n;
+      }, [data, stats]);
+
+      const distInfo = {
+        normal:      'Bell-shaped and symmetric. Defined entirely by its mean and standard deviation.',
+        uniform:     'All values in the range are equally likely. Mean ± σ√3 sets the bounds.',
+        exponential: 'Models time between random events. Always positive; heavily right-skewed.',
+        skewed:      'Asymmetric with a long right tail — common in income, wait times, and natural measurements.',
+      };
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Probability Distributions</h2>
+            <p>Generate random samples and explore how shape, center, and spread interact</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="control-group">
+                <label>Distribution Shape</label>
+                <select value={distType} onChange={e => setDistType(e.target.value)}>
+                  <option value="normal">Normal (Gaussian)</option>
+                  <option value="uniform">Uniform</option>
+                  <option value="exponential">Exponential</option>
+                  <option value="skewed">Right-Skewed</option>
+                </select>
+              </div>
+              <div className="info-card">
+                <p>{distInfo[distType]}</p>
+              </div>
+              <div className="divider" />
+              <div className="slider-group">
+                <div className="slider-row"><span>Mean (μ)</span><span className="slider-value">{mean}</span></div>
+                <input type="range" min={10} max={90} value={mean} onChange={e => setMean(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Std Dev (σ)</span><span className="slider-value">{std}</span></div>
+                <input type="range" min={1} max={30} value={std} onChange={e => setStd(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Sample Size (n)</span><span className="slider-value">{n.toLocaleString()}</span></div>
+                <input type="range" min={30} max={5000} step={10} value={n} onChange={e => setN(+e.target.value)} />
+              </div>
+              <button className="btn btn-primary" onClick={resample}>↺ Resample</button>
+              <div className="divider" />
+              <div className="section-label">Sample Statistics</div>
+              <div className="stats-grid">
+                <div className="stat-box">
+                  <div className="stat-box-value">{stats.mean.toFixed(2)}</div>
+                  <div className="stat-box-label">Mean x̄</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{stats.median.toFixed(2)}</div>
+                  <div className="stat-box-label">Median</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{stats.std.toFixed(2)}</div>
+                  <div className="stat-box-label">Std Dev s</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{skewness.toFixed(2)}</div>
+                  <div className="stat-box-label">Skewness</div>
+                </div>
+              </div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <SVGHistogram
+                  data={data}
+                  color="#0d9488"
+                  title={`${distType.charAt(0).toUpperCase()+distType.slice(1)} distribution — n = ${n.toLocaleString()}`}
+                  overlayNormal={distType === 'normal'}
+                  height={260}
+                  xLabel="value"
+                />
+              </div>
+              <div className="info-card">
+                <p>
+                  <strong>Set μ = {mean}</strong>, sampled x̄ = {stats.mean.toFixed(2)} (difference = {Math.abs(stats.mean - mean).toFixed(2)} — sampling error shrinks as n grows).
+                  {distType === 'normal' && ' The dashed curve shows the theoretical normal density.'}
+                  {distType !== 'normal' && ` Skewness = ${skewness.toFixed(2)} — positive means right tail is longer.`}
+                  {' '}Mean − Median = {(stats.mean - stats.median).toFixed(2)}{Math.abs(stats.mean - stats.median) > 1 ? ' (nonzero skew pulls the mean away from the median).' : ' (near zero, as expected for a symmetric distribution).'}
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: '#64748b', flexWrap: 'wrap' }}>
+                <span>Min: {stats.min.toFixed(2)}</span><span>·</span>
+                <span>Max: {stats.max.toFixed(2)}</span><span>·</span>
+                <span>Range: {(stats.max - stats.min).toFixed(2)}</span><span>·</span>
+                <span>IQR ≈ {(stats.std * 1.35).toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Central Limit Theorem ──────────────────────────────────────────────────
+
+    function CLTSection() {
+      const [distType, setDistType] = useState('skewed');
+      const [popMean, setPopMean] = useState(50);
+      const [popStd, setPopStd] = useState(15);
+      const [sampleN, setSampleN] = useState(30);
+      const [sampleMeans, setSampleMeans] = useState([]);
+      const [popData, setPopData] = useState(() => generateSample('skewed', 50, 15, 2000));
+
+      useEffect(() => {
+        setPopData(generateSample(distType, popMean, popStd, 2000));
+        setSampleMeans([]);
+      }, [distType, popMean, popStd]);
+
+      useEffect(() => { setSampleMeans([]); }, [sampleN]);
+
+      const drawSamples = useCallback((k) => {
+        const newMeans = Array.from({ length: k }, () => {
+          const s = generateSample(distType, popMean, popStd, sampleN);
+          return s.reduce((a, b) => a + b, 0) / s.length;
+        });
+        setSampleMeans(prev => [...prev, ...newMeans].slice(-3000));
+      }, [distType, popMean, popStd, sampleN]);
+
+      const reset = () => setSampleMeans([]);
+
+      const theoreticalSE = popStd / Math.sqrt(sampleN);
+      const meansStats = useMemo(() => sampleMeans.length > 1 ? sampleStats(sampleMeans) : null, [sampleMeans]);
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Central Limit Theorem</h2>
+            <p>Draw repeated samples and watch the distribution of sample means become normal — regardless of population shape</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="control-group">
+                <label>Population Shape</label>
+                <select value={distType} onChange={e => setDistType(e.target.value)}>
+                  <option value="skewed">Right-Skewed (try this first)</option>
+                  <option value="uniform">Uniform</option>
+                  <option value="exponential">Exponential</option>
+                  <option value="normal">Normal</option>
+                </select>
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Population Mean (μ)</span><span className="slider-value">{popMean}</span></div>
+                <input type="range" min={10} max={90} value={popMean} onChange={e => setPopMean(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Population Std (σ)</span><span className="slider-value">{popStd}</span></div>
+                <input type="range" min={2} max={30} value={popStd} onChange={e => setPopStd(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Sample Size (n)</span><span className="slider-value">{sampleN}</span></div>
+                <input type="range" min={2} max={100} value={sampleN} onChange={e => setSampleN(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="btn-group">
+                <button className="btn btn-primary" onClick={() => drawSamples(1)}>Draw 1</button>
+                <button className="btn btn-secondary" onClick={() => drawSamples(100)}>+100</button>
+                <button className="btn btn-secondary" onClick={() => drawSamples(1000)}>+1000</button>
+              </div>
+              <button className="btn btn-danger" onClick={reset} style={{ width: '100%' }}>Reset</button>
+              <div className="divider" />
+              <div className="section-label">Sampling Distribution</div>
+              <div className="stats-grid">
+                <div className="stat-box">
+                  <div className="stat-box-value">{sampleMeans.length.toLocaleString()}</div>
+                  <div className="stat-box-label">Samples drawn</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{theoreticalSE.toFixed(3)}</div>
+                  <div className="stat-box-label">SE = σ/√n</div>
+                </div>
+                {meansStats && <>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{meansStats.mean.toFixed(2)}</div>
+                    <div className="stat-box-label">Mean of x̄'s</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{meansStats.std.toFixed(3)}</div>
+                    <div className="stat-box-label">Actual SE</div>
+                  </div>
+                </>}
+              </div>
+              <div className="formula-box">SE = σ/√n = {popStd}/{sampleN === 1 ? '1' : `√${sampleN}`} = {theoreticalSE.toFixed(3)}</div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <SVGHistogram data={popData} color="#94a3b8"
+                  title={`Population (${distType}, μ=${popMean}, σ=${popStd})`}
+                  height={165} xLabel="value" />
+              </div>
+              <div className="chart-container">
+                <SVGHistogram data={sampleMeans} color="#0d9488"
+                  title={`Sampling distribution of x̄  (n=${sampleN}, ${sampleMeans.length.toLocaleString()} samples drawn)`}
+                  overlayNormal={sampleMeans.length > 30}
+                  height={185} xLabel="sample mean" />
+              </div>
+              {sampleMeans.length === 0 ? (
+                <div className="info-card">
+                  <p>Start with a <strong>right-skewed population</strong> and draw samples. Each click computes the mean of n={sampleN} observations and adds it to the bottom histogram. After enough samples, the histogram becomes bell-shaped — that's the CLT.</p>
+                </div>
+              ) : sampleMeans.length >= 30 && (
+                <div className="info-card">
+                  <p>
+                    <strong>CLT:</strong> sampling distribution is approximately Normal(μ={popMean}, SE={theoreticalSE.toFixed(3)}).
+                    {meansStats && ` Empirical: mean = ${meansStats.mean.toFixed(2)}, SE = ${meansStats.std.toFixed(3)}.`}
+                    {sampleN >= 30 ? ' n ≥ 30 — the approximation is excellent even for skewed populations.' : ' Try increasing n to see the approximation sharpen.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Confidence Intervals ───────────────────────────────────────────────────
+
+    function CISection() {
+      const [trueMean, setTrueMean] = useState(50);
+      const [popStd, setPopStd] = useState(10);
+      const [n, setN] = useState(30);
+      const [confLevel, setConfLevel] = useState(0.95);
+      const [intervals, setIntervals] = useState([]);
+
+      const z = useMemo(() => zCritical(1 - confLevel, 'two'), [confLevel]);
+      const me = (z * popStd / Math.sqrt(n));
+
+      const addIntervals = useCallback((k) => {
+        const newInts = Array.from({ length: k }, () => {
+          const sample = generateSample('normal', trueMean, popStd, n);
+          const xbar = sample.reduce((a, b) => a + b, 0) / n;
+          const lo = xbar - z * (popStd / Math.sqrt(n));
+          const hi = xbar + z * (popStd / Math.sqrt(n));
+          return { lo, hi, xbar, covers: lo <= trueMean && trueMean <= hi };
+        });
+        setIntervals(prev => [...prev, ...newInts].slice(-120));
+      }, [trueMean, popStd, n, z]);
+
+      const reset = () => setIntervals([]);
+
+      const covered = intervals.filter(i => i.covers).length;
+      const coverageRate = intervals.length ? (covered / intervals.length * 100).toFixed(1) : null;
+
+      // SVG layout for CI strips
+      const VW = 480, VH = Math.max(intervals.length * 7 + 50, 80);
+      const padL = 48, padR = 12, padT = 18, padB = 10;
+      const iW = VW - padL - padR;
+
+      const allVals = intervals.flatMap(i => [i.lo, i.hi]);
+      allVals.push(trueMean - me * 3, trueMean + me * 3);
+      const xMin = Math.min(...allVals), xMax = Math.max(...allVals);
+      const xRange = xMax - xMin || 1;
+      const xS = v => ((v - xMin) / xRange) * iW;
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Confidence Intervals</h2>
+            <p>Build intervals from repeated samples — see the coverage rate and understand what "{(confLevel*100).toFixed(0)}% confident" really means</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="slider-group">
+                <div className="slider-row"><span>True Mean (μ)</span><span className="slider-value">{trueMean}</span></div>
+                <input type="range" min={20} max={80} value={trueMean} onChange={e => { setTrueMean(+e.target.value); reset(); }} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Pop. Std Dev (σ)</span><span className="slider-value">{popStd}</span></div>
+                <input type="range" min={2} max={25} value={popStd} onChange={e => { setPopStd(+e.target.value); reset(); }} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Sample Size (n)</span><span className="slider-value">{n}</span></div>
+                <input type="range" min={5} max={200} value={n} onChange={e => { setN(+e.target.value); reset(); }} />
+              </div>
+              <div className="control-group">
+                <label>Confidence Level</label>
+                <select value={confLevel} onChange={e => { setConfLevel(+e.target.value); reset(); }}>
+                  <option value={0.90}>90%  (z* ≈ 1.645)</option>
+                  <option value={0.95}>95%  (z* ≈ 1.960)</option>
+                  <option value={0.99}>99%  (z* ≈ 2.576)</option>
+                </select>
+              </div>
+              <div className="formula-box">
+                CI = x̄ ± z* · σ/√n{'\n'}
+                ME = {z.toFixed(3)} · {popStd}/√{n} = ±{me.toFixed(2)}
+              </div>
+              <div className="divider" />
+              <div className="btn-group">
+                <button className="btn btn-primary" onClick={() => addIntervals(1)}>+1 CI</button>
+                <button className="btn btn-secondary" onClick={() => addIntervals(20)}>+20</button>
+                <button className="btn btn-secondary" onClick={() => addIntervals(50)}>+50</button>
+              </div>
+              <button className="btn btn-danger" onClick={reset} style={{ width: '100%' }}>Reset</button>
+              {intervals.length > 0 && <>
+                <div className="divider" />
+                <div className="section-label">Coverage</div>
+                <div className="stats-grid">
+                  <div className="stat-box">
+                    <div className="stat-box-value" style={{ color: Math.abs(+coverageRate - confLevel*100) < 6 ? '#059669' : '#dc2626' }}>
+                      {coverageRate}%
+                    </div>
+                    <div className="stat-box-label">Actual</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{(confLevel*100).toFixed(0)}%</div>
+                    <div className="stat-box-label">Expected</div>
+                  </div>
+                  <div className="stat-box" style={{ gridColumn: 'span 2' }}>
+                    <div className="stat-box-value">{covered} / {intervals.length}</div>
+                    <div className="stat-box-label">Intervals covering μ</div>
+                  </div>
+                </div>
+              </>}
+            </div>
+            <div className="results-panel">
+              {intervals.length === 0 ? (
+                <div className="info-card" style={{ flex: 1 }}>
+                  <p>
+                    A <strong>{(confLevel*100).toFixed(0)}% confidence interval</strong> means: repeat the sampling procedure many times — about {(confLevel*100).toFixed(0)}% of all resulting intervals will contain the true mean μ = {trueMean}. This is a statement about the <em>procedure</em>, not any individual interval.<br /><br />
+                    Click <strong>+1 CI</strong> to draw one sample, build an interval, and add it to the plot.
+                    <span style={{ color: '#059669' }}> Green</span> = covers μ &nbsp;·&nbsp;
+                    <span style={{ color: '#dc2626' }}>Red</span> = misses μ.
+                  </p>
+                </div>
+              ) : (
+                <div className="chart-container" style={{ overflowY: 'auto', maxHeight: 440 }}>
+                  <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+                    <g transform={`translate(${padL},${padT})`}>
+                      <line x1={xS(trueMean)} y1={0} x2={xS(trueMean)} y2={VH - padT - padB} stroke="#0d9488" strokeWidth={1.5} strokeDasharray="4,3" />
+                      <text x={xS(trueMean)+3} y={11} fontSize={9} fill="#0d9488" fontWeight={600}>μ={trueMean}</text>
+                      {intervals.map((iv, i) => {
+                        const y = i * 7 + 22;
+                        const c = iv.covers ? '#059669' : '#dc2626';
+                        return (
+                          <g key={i}>
+                            <line x1={xS(iv.lo)} y1={y} x2={xS(iv.hi)} y2={y} stroke={c} strokeWidth={2.5} opacity={0.72} />
+                            <circle cx={xS(iv.xbar)} cy={y} r={1.8} fill={c} />
+                          </g>
+                        );
+                      })}
+                    </g>
+                  </svg>
+                </div>
+              )}
+              {intervals.length > 0 && (
+                <div className="info-card">
+                  <p>
+                    <strong>Coverage: {coverageRate}%</strong> (expected ≈ {(confLevel*100).toFixed(0)}%).
+                    Each interval has ME ±{me.toFixed(2)}.
+                    {n < 30 ? ' Tip: with n < 30 and unknown σ, a t-interval would be more accurate.' : ''}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Hypothesis Testing ─────────────────────────────────────────────────────
+
+    function HypothesisSection() {
+      const [mu0,         setMu0]         = useState(50);
+      const [trueMu,      setTrueMu]      = useState(53);
+      const [popStd,      setPopStd]      = useState(10);
+      const [n,           setN]           = useState(30);
+      const [alpha,       setAlpha]       = useState(0.05);
+      const [tail,        setTail]        = useState('two');
+      const [testResults, setTestResults] = useState([]);
+
+      const critZ = useMemo(() => zCritical(alpha, tail), [alpha, tail]);
+
+      const runTests = useCallback((k) => {
+        const newResults = Array.from({ length: k }, () => {
+          const sample = generateSample('normal', trueMu, popStd, n);
+          const xbar = sample.reduce((a, b) => a + b, 0) / n;
+          const se = popStd / Math.sqrt(n);
+          const z = (xbar - mu0) / se;
+          let pVal;
+          if (tail === 'two')   pVal = 2 * (1 - normalCDF(Math.abs(z)));
+          else if (tail === 'right') pVal = 1 - normalCDF(z);
+          else                       pVal = normalCDF(z);
+          return { xbar, z, pVal, reject: pVal < alpha };
+        });
+        setTestResults(prev => [...prev, ...newResults].slice(-1000));
+      }, [mu0, trueMu, popStd, n, alpha, tail]);
+
+      const reset = () => setTestResults([]);
+
+      const rejectCount = testResults.filter(r => r.reject).length;
+      const power = testResults.length ? (rejectCount / testResults.length * 100).toFixed(1) : null;
+      const latest = testResults[testResults.length - 1];
+
+      // SVG null distribution
+      const VW = 500, VH = 160;
+      const padL = 40, padR = 15, padT = 18, padB = 28;
+      const iW = VW - padL - padR, iH = VH - padT - padB;
+      const zRange = 4.2;
+      const xSz = v => ((v + zRange) / (2 * zRange)) * iW;
+      const maxDens = normalPDF(0, 0, 1);
+      const ySz = v => iH - (v / (maxDens * 1.1)) * iH;
+
+      const curvePts = Array.from({ length: 100 }, (_, i) => {
+        const z = -zRange + (i / 99) * 2 * zRange;
+        return `${xSz(z).toFixed(1)},${ySz(normalPDF(z,0,1)).toFixed(1)}`;
+      }).join(' ');
+
+      function rejPolygon(lo, hi) {
+        const zVals = Array.from({ length: 60 }, (_, i) => lo + (i/59)*(hi-lo));
+        const top = zVals.map(z => `${xSz(z).toFixed(1)},${ySz(normalPDF(z,0,1)).toFixed(1)}`).join(' ');
+        return `${xSz(lo).toFixed(1)},${iH} ${top} ${xSz(hi).toFixed(1)},${iH}`;
+      }
+
+      const h0True = (trueMu === mu0);
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Hypothesis Testing</h2>
+            <p>Run simulated z-tests to see p-values, Type I & II errors, and statistical power in action</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="slider-group">
+                <div className="slider-row"><span>Null mean (μ₀)</span><span className="slider-value">{mu0}</span></div>
+                <input type="range" min={30} max={70} value={mu0} onChange={e => { setMu0(+e.target.value); reset(); }} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>True mean (μ)</span><span className="slider-value">{trueMu}</span></div>
+                <input type="range" min={30} max={70} value={trueMu} onChange={e => { setTrueMu(+e.target.value); reset(); }} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Std Dev (σ)</span><span className="slider-value">{popStd}</span></div>
+                <input type="range" min={2} max={25} value={popStd} onChange={e => { setPopStd(+e.target.value); reset(); }} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Sample Size (n)</span><span className="slider-value">{n}</span></div>
+                <input type="range" min={5} max={200} value={n} onChange={e => { setN(+e.target.value); reset(); }} />
+              </div>
+              <div className="control-group">
+                <label>Significance Level (α)</label>
+                <select value={alpha} onChange={e => { setAlpha(+e.target.value); reset(); }}>
+                  <option value={0.10}>α = 0.10</option>
+                  <option value={0.05}>α = 0.05</option>
+                  <option value={0.01}>α = 0.01</option>
+                </select>
+              </div>
+              <div className="control-group">
+                <label>Test Type</label>
+                <select value={tail} onChange={e => { setTail(e.target.value); reset(); }}>
+                  <option value="two">Two-tailed  H₁: μ ≠ μ₀</option>
+                  <option value="right">Right-tailed  H₁: μ &gt; μ₀</option>
+                  <option value="left">Left-tailed  H₁: μ &lt; μ₀</option>
+                </select>
+              </div>
+              <div className="formula-box">z = (x̄ − μ₀) / (σ/√n){'\n'}critical z = ±{critZ.toFixed(3)}</div>
+              <div className="divider" />
+              <div className="btn-group">
+                <button className="btn btn-primary" onClick={() => runTests(1)}>Run 1 Test</button>
+                <button className="btn btn-secondary" onClick={() => runTests(100)}>+100</button>
+                <button className="btn btn-secondary" onClick={() => runTests(500)}>+500</button>
+              </div>
+              <button className="btn btn-danger" onClick={reset} style={{ width: '100%' }}>Reset</button>
+              {power !== null && <>
+                <div className="divider" />
+                <div className="section-label">Simulation Results</div>
+                <div className="stats-grid">
+                  <div className="stat-box">
+                    <div className="stat-box-value" style={{ color: '#059669' }}>{power}%</div>
+                    <div className="stat-box-label">{h0True ? 'Type I rate' : 'Power'}</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{testResults.length.toLocaleString()}</div>
+                    <div className="stat-box-label">Tests run</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{rejectCount}</div>
+                    <div className="stat-box-label">Rejected H₀</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{testResults.length - rejectCount}</div>
+                    <div className="stat-box-label">Failed to reject</div>
+                  </div>
+                </div>
+              </>}
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <div className="chart-title">Null distribution (H₀: μ = {mu0}) — rejection region shaded red (α = {alpha})</div>
+                <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+                  <g transform={`translate(${padL},${padT})`}>
+                    {(tail === 'two' || tail === 'left')  && <polygon points={rejPolygon(-zRange, -critZ)} fill="#fee2e2" />}
+                    {(tail === 'two' || tail === 'right') && <polygon points={rejPolygon(critZ, zRange)}   fill="#fee2e2" />}
+                    <polyline points={curvePts} fill="none" stroke="#64748b" strokeWidth={2} />
+                    {(tail === 'two' || tail === 'right') && <line x1={xSz(critZ)} y1={0} x2={xSz(critZ)} y2={iH} stroke="#dc2626" strokeWidth={1} strokeDasharray="3,2" />}
+                    {(tail === 'two' || tail === 'left')  && <line x1={xSz(-critZ)} y1={0} x2={xSz(-critZ)} y2={iH} stroke="#dc2626" strokeWidth={1} strokeDasharray="3,2" />}
+                    {latest && <>
+                      <line x1={xSz(latest.z)} y1={0} x2={xSz(latest.z)} y2={iH}
+                        stroke={latest.reject ? '#dc2626' : '#0d9488'} strokeWidth={2} />
+                      <circle cx={xSz(latest.z)} cy={ySz(normalPDF(latest.z,0,1))} r={4}
+                        fill={latest.reject ? '#dc2626' : '#0d9488'} />
+                      <text x={xSz(latest.z)+4} y={10} fontSize={8} fill={latest.reject ? '#dc2626' : '#0d9488'}>
+                        z={latest.z.toFixed(2)}
+                      </text>
+                    </>}
+                    <line x1={0} y1={iH} x2={iW} y2={iH} stroke="#94a3b8" strokeWidth={1} />
+                    {[-3,-2,-1,0,1,2,3].map(v => (
+                      <g key={v}>
+                        <line x1={xSz(v)} y1={iH} x2={xSz(v)} y2={iH+4} stroke="#94a3b8" strokeWidth={1} />
+                        <text x={xSz(v)} y={iH+14} textAnchor="middle" fontSize={9} fill="#94a3b8">{v}</text>
+                      </g>
+                    ))}
+                    <text x={iW/2} y={iH+26} textAnchor="middle" fontSize={9} fill="#94a3b8">z-score</text>
+                  </g>
+                </svg>
+              </div>
+              {latest ? (
+                <div className="info-card" style={{
+                  borderColor: latest.reject ? '#fecaca' : '#99f6e4',
+                  background:  latest.reject ? '#fff1f2' : '#f0fdfa',
+                }}>
+                  <p>
+                    <strong>Latest:</strong> x̄ = {latest.xbar.toFixed(2)}, z = {latest.z.toFixed(3)}, p = {latest.pVal.toFixed(4)} →
+                    <strong style={{ color: latest.reject ? '#dc2626' : '#059669' }}>
+                      {latest.reject ? ' Reject H₀' : ' Fail to reject H₀'}
+                    </strong>.
+                    {!h0True && !latest.reject && ' (Type II error: true μ ≠ μ₀ but we missed it.)'}
+                    {h0True  &&  latest.reject && ' (Type I error: H₀ is true but we rejected it.)'}
+                  </p>
+                </div>
+              ) : (
+                <div className="info-card">
+                  <p>
+                    H₀: μ = {mu0}. True μ = {trueMu}.{' '}
+                    {h0True
+                      ? `H₀ is TRUE — any rejection is a Type I error. With α=${alpha}, expect ~${(alpha*100).toFixed(0)}% of tests to (incorrectly) reject.`
+                      : `H₀ is FALSE — effect size = ${((trueMu-mu0)/popStd).toFixed(2)}σ. Failures to reject are Type II errors. Run tests to estimate power.`
+                    }
+                  </p>
+                </div>
+              )}
+              {testResults.length > 20 && (
+                <div className="chart-container">
+                  <SVGHistogram
+                    data={testResults.map(r => r.pVal)}
+                    color={h0True ? '#94a3b8' : '#0d9488'}
+                    title={`p-value distribution (${testResults.length.toLocaleString()} tests) — ${h0True ? 'H₀ true → uniform' : 'H₀ false → skewed left'}`}
+                    height={150} xLabel="p-value" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Correlation & Regression ───────────────────────────────────────────────
+
+    function CorrelationSection() {
+      const [targetR, setTargetR] = useState(0.70);
+      const [n, setN]             = useState(60);
+      const [points, setPoints]   = useState(() => generateCorrelatedData(0.70, 60));
+
+      useEffect(() => {
+        setPoints(generateCorrelatedData(targetR, n));
+      }, [targetR, n]);
+
+      const stats = useMemo(() => {
+        if (points.length < 2) return null;
+        const xs = points.map(p => p.x), ys = points.map(p => p.y);
+        const nn = xs.length;
+        const xbar = xs.reduce((a,b) => a+b, 0) / nn;
+        const ybar = ys.reduce((a,b) => a+b, 0) / nn;
+        const Sxx = xs.reduce((a,x) => a+(x-xbar)**2, 0);
+        const Syy = ys.reduce((a,y) => a+(y-ybar)**2, 0);
+        const Sxy = xs.reduce((a,x,i) => a+(x-xbar)*(ys[i]-ybar), 0);
+        const r    = Sxy / Math.sqrt(Sxx * Syy);
+        const slope = Sxy / Sxx;
+        const intercept = ybar - slope * xbar;
+        return { r, r2: r*r, slope, intercept, xbar, ybar, n: nn };
+      }, [points]);
+
+      const rStrength = r => {
+        const a = Math.abs(r);
+        const dir = r > 0 ? 'positive' : r < 0 ? 'negative' : '';
+        const str = a > 0.8 ? 'strong' : a > 0.5 ? 'moderate' : a > 0.3 ? 'weak' : 'very weak';
+        return `${str} ${dir}`.trim();
+      };
+
+      const VW = 480, VH = 300;
+      const padL = 44, padR = 18, padT = 18, padB = 36;
+      const iW = VW - padL - padR, iH = VH - padT - padB;
+
+      const allX = points.map(p => p.x), allY = points.map(p => p.y);
+      const xMin = Math.min(...allX) - 3, xMax = Math.max(...allX) + 3;
+      const yMin = Math.min(...allY) - 3, yMax = Math.max(...allY) + 3;
+      const xS = v => ((v-xMin)/(xMax-xMin)) * iW;
+      const yS = v => iH - ((v-yMin)/(yMax-yMin)) * iH;
+
+      const nTicks = 4;
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Correlation &amp; Regression</h2>
+            <p>Explore how two variables relate — understand r, R², slope, and what correlation does (and doesn't) imply</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="slider-group">
+                <div className="slider-row"><span>Target correlation (r)</span><span className="slider-value">{targetR.toFixed(2)}</span></div>
+                <input type="range" min={-0.99} max={0.99} step={0.01} value={targetR} onChange={e => setTargetR(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Sample Size (n)</span><span className="slider-value">{n}</span></div>
+                <input type="range" min={10} max={300} step={5} value={n} onChange={e => setN(+e.target.value)} />
+              </div>
+              <button className="btn btn-primary" onClick={() => setPoints(generateCorrelatedData(targetR, n))}>↺ Regenerate</button>
+              {stats && <>
+                <div className="divider" />
+                <div className="section-label">Results</div>
+                <div className="stats-grid">
+                  <div className="stat-box">
+                    <div className="stat-box-value" style={{ color: Math.abs(stats.r)>0.7 ? '#059669' : Math.abs(stats.r)>0.4 ? '#d97706' : '#64748b' }}>
+                      {stats.r.toFixed(3)}
+                    </div>
+                    <div className="stat-box-label">Pearson r</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{(stats.r2*100).toFixed(1)}%</div>
+                    <div className="stat-box-label">R² (variance expl.)</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{stats.slope.toFixed(3)}</div>
+                    <div className="stat-box-label">Slope β₁</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{stats.intercept.toFixed(2)}</div>
+                    <div className="stat-box-label">Intercept β₀</div>
+                  </div>
+                </div>
+                <div className="formula-box">
+                  ŷ = {stats.slope.toFixed(3)}x {stats.intercept >= 0 ? '+' : '−'} {Math.abs(stats.intercept).toFixed(2)}
+                </div>
+                <div className="info-card">
+                  <p>
+                    <strong>{rStrength(stats.r)}</strong> linear relationship (r = {stats.r.toFixed(3)}).
+                    R² = {(stats.r2*100).toFixed(1)}% — the regression line explains {(stats.r2*100).toFixed(1)}% of the variance in y.
+                    The remaining {(100 - stats.r2*100).toFixed(1)}% is unexplained scatter.
+                  </p>
+                </div>
+              </>}
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+                  <g transform={`translate(${padL},${padT})`}>
+                    {points.map((p, i) => (
+                      <circle key={i} cx={xS(p.x)} cy={yS(p.y)} r={3} fill="#0d9488" opacity={0.5} />
+                    ))}
+                    {stats && (() => {
+                      const y1 = stats.slope * xMin + stats.intercept;
+                      const y2 = stats.slope * xMax + stats.intercept;
+                      return <line x1={xS(xMin)} y1={yS(y1)} x2={xS(xMax)} y2={yS(y2)} stroke="#dc2626" strokeWidth={2} opacity={0.85} />;
+                    })()}
+                    {stats && (
+                      <text x={iW-4} y={14} textAnchor="end" fontSize={11} fill="#374151" fontWeight={700}>
+                        r = {stats.r.toFixed(3)}
+                      </text>
+                    )}
+                    <line x1={0} y1={iH} x2={iW} y2={iH} stroke="#94a3b8" strokeWidth={1} />
+                    <line x1={0} y1={0} x2={0}  y2={iH} stroke="#94a3b8" strokeWidth={1} />
+                    {Array.from({ length: nTicks+1 }, (_, i) => {
+                      const v = xMin + (i/nTicks)*(xMax-xMin);
+                      return (
+                        <g key={i}>
+                          <line x1={xS(v)} y1={iH} x2={xS(v)} y2={iH+4} stroke="#94a3b8" strokeWidth={1} />
+                          <text x={xS(v)} y={iH+14} textAnchor="middle" fontSize={9} fill="#94a3b8">{v.toFixed(0)}</text>
+                        </g>
+                      );
+                    })}
+                    {Array.from({ length: nTicks+1 }, (_, i) => {
+                      const v = yMin + (i/nTicks)*(yMax-yMin);
+                      return (
+                        <g key={i}>
+                          <line x1={0} y1={yS(v)} x2={-4} y2={yS(v)} stroke="#94a3b8" strokeWidth={1} />
+                          <text x={-6} y={yS(v)+3} textAnchor="end" fontSize={9} fill="#94a3b8">{v.toFixed(0)}</text>
+                        </g>
+                      );
+                    })}
+                    <text x={iW/2} y={iH+28} textAnchor="middle" fontSize={10} fill="#94a3b8">x</text>
+                    <text x={-iH/2} y={-32} textAnchor="middle" fontSize={10} fill="#94a3b8" transform="rotate(-90)">y</text>
+                  </g>
+                </svg>
+              </div>
+              <div className="info-card">
+                <p>
+                  Drag the <strong>r slider</strong> from −1 to +1 to see how the cloud of points shifts from a negative slope to a positive one,
+                  and how the regression line (red) tracks it. Notice how r near 0 gives a nearly flat line and lots of scatter,
+                  while |r| near 1 collapses the points onto the line.
+                  <strong> Correlation only captures linear relationships</strong> — you can have a strong nonlinear pattern with r ≈ 0.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Main App ───────────────────────────────────────────────────────────────
+
+    function StatsBasicsApp() {
+      const [activeSection, setActiveSection] = useState('home');
+
+      const navItems = [
+        { id: 'distributions', label: 'Distributions' },
+        { id: 'clt',           label: 'CLT' },
+        { id: 'ci',            label: 'Conf. Intervals' },
+        { id: 'hypothesis',    label: 'Hypothesis Testing' },
+        { id: 'correlation',   label: 'Correlation' },
+      ];
+
+      const renderHome = () => (
+        <div className="home-section">
+          <div className="hero">
+            <h1>Explore Statistics</h1>
+            <p className="hero-subtitle">Interactive simulations to build statistical intuition</p>
+            <div className="hero-stats">
+              <div className="stat-item"><div className="stat-number">5</div><div className="stat-label">Topics</div></div>
+              <div className="stat-item"><div className="stat-number">100%</div><div className="stat-label">Interactive</div></div>
+              <div className="stat-item"><div className="stat-number">Free</div><div className="stat-label">Always</div></div>
+            </div>
+          </div>
+          <div className="topics-grid">
+            {[
+              { id: 'distributions', icon: '📊', title: 'Distributions',         desc: 'Visualize normal, uniform, exponential, and skewed distributions. Adjust mean and spread and watch the histogram update live.' },
+              { id: 'clt',           icon: '🔔', title: 'Central Limit Theorem', desc: 'Take repeated samples from a skewed population and watch the distribution of sample means converge to a bell curve.' },
+              { id: 'ci',            icon: '📏', title: 'Confidence Intervals',  desc: 'Build intervals from many samples, observe the coverage rate, and truly understand what "95% confident" means.' },
+              { id: 'hypothesis',    icon: '⚖️', title: 'Hypothesis Testing',    desc: 'Run simulated z-tests and observe Type I errors, Type II errors, p-values, and statistical power in action.' },
+              { id: 'correlation',   icon: '📈', title: 'Correlation & Regression', desc: 'Generate correlated data, fit a regression line, and understand r, R², slope — and what correlation does not imply.' },
+            ].map(t => (
+              <div className="topic-card" key={t.id} onClick={() => setActiveSection(t.id)}>
+                <div className="topic-icon">{t.icon}</div>
+                <h3>{t.title}</h3>
+                <p>{t.desc}</p>
+                <span className="topic-arrow">Explore →</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      const sectionMap = {
+        home:          renderHome,
+        distributions: () => <DistributionsSection />,
+        clt:           () => <CLTSection />,
+        ci:            () => <CISection />,
+        hypothesis:    () => <HypothesisSection />,
+        correlation:   () => <CorrelationSection />,
+      };
+
+      return (
+        <div className="app">
+          <nav className="navbar">
+            <div className="nav-brand" onClick={() => setActiveSection('home')}>
+              <span className="nav-brand-symbol">σ</span>
+              <div>
+                <div className="nav-brand-title">StatsBasics</div>
+                <div className="nav-brand-subtitle">interactive statistics</div>
+              </div>
+            </div>
+            <div className="nav-links">
+              {navItems.map(item => (
+                <button
+                  key={item.id}
+                  className={activeSection === item.id ? 'active' : ''}
+                  onClick={() => setActiveSection(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </nav>
+          <main className="main-content">
+            {sectionMap[activeSection]?.()}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<StatsBasicsApp />);
+  </script>
+</body>
+</html>
