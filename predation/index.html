@@ -570,12 +570,6 @@
             font-size: 0.9em;
         }
 
-        @media (max-width: 968px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* Enhancement #1: Rich Tooltips */
         .rich-tooltip {
             position: absolute;
@@ -791,26 +785,6 @@
             font-weight: 600;
         }
 
-        .skeleton {
-            background: linear-gradient(
-                90deg,
-                #f0f0f0 25%,
-                #e0e0e0 50%,
-                #f0f0f0 75%
-            );
-            background-size: 200% 100%;
-            animation: loading 1.5s ease-in-out infinite;
-        }
-
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
         /* Enhancement #17: Validation Warnings */
         .validation-warning {
             background: #fef2f2;
@@ -962,6 +936,7 @@
                         <div class="legend-box sampled"></div>
                         <span class="legend-text">Sampled Cell</span>
                     </div>
+                    <p style="font-size: 0.75em; color: #666; margin-top: 8px;">Note: arrows are omitted for events that span across grid panels.</p>
                 </div>
                 <div class="grid-container">
                     <div class="grid-wrapper">
@@ -1880,16 +1855,14 @@
             });
             sampledIndices.clear();
 
-            // Draw simple random sample without replacement - sample ALL cells with equal probability
+            // Draw simple random sample without replacement using Fisher-Yates partial shuffle (O(n))
             const indices = Array.from({length: N}, (_, i) => i);
-            const sample = [];
-            
             for (let i = 0; i < n; i++) {
-                const randomIndex = Math.floor(Math.random() * indices.length);
-                const selectedIndex = indices.splice(randomIndex, 1)[0];
-                sampledIndices.add(selectedIndex);
-                sample.push(selectedIndex);
+                const j = i + Math.floor(Math.random() * (N - i));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
             }
+            const sample = indices.slice(0, n);
+            sample.forEach(idx => sampledIndices.add(idx));
 
             // Determine which sampled cells are origins vs continuations vs empty
             const sampledOrigins = [];
@@ -1961,8 +1934,10 @@
             const biasedMean = totalDetections / n;
             const biasedTotal = N * biasedMean;
             
-            // Biased variance and SE (using detection counts)
-            const biasedSampleVariance = biasedMean * (1 - biasedMean);
+            // Biased variance and SE (computed from actual per-cell detection indicators)
+            const continuationSet = new Set(sampledContinuations);
+            const detectionValues = sample.map(idx => (population[idx] > 0 || continuationSet.has(idx)) ? 1 : 0);
+            const biasedSampleVariance = detectionValues.reduce((sum, val) => sum + Math.pow(val - biasedMean, 2), 0) / (n - 1);
             const biasedSE = N * fpc * Math.sqrt(biasedSampleVariance / n);
             
             // Biased 95% CI
@@ -2048,31 +2023,29 @@
             
             progressOverlay.style.display = 'flex';
             progressTotal.textContent = numSimulations;
-            
+
+            // Build continuation map once — events don't change during simulation
+            const continuationMap = new Map();
+            events.forEach(event => {
+                event.continuation.forEach(idx => {
+                    continuationMap.set(idx, event.origin);
+                });
+            });
+
             // Run simulations in batches to allow UI updates
             const batchSize = 100;
             for (let batch = 0; batch < Math.ceil(numSimulations / batchSize); batch++) {
                 const batchStart = batch * batchSize;
                 const batchEnd = Math.min(batchStart + batchSize, numSimulations);
-                
+
                 for (let sim = batchStart; sim < batchEnd; sim++) {
-                    // Draw a random sample
+                    // Draw a random sample using Fisher-Yates partial shuffle (O(n))
                     const indices = Array.from({length: N}, (_, i) => i);
-                    const sample = [];
-                    
                     for (let i = 0; i < n; i++) {
-                        const randomIndex = Math.floor(Math.random() * indices.length);
-                        const selectedIndex = indices.splice(randomIndex, 1)[0];
-                        sample.push(selectedIndex);
+                        const j = i + Math.floor(Math.random() * (N - i));
+                        [indices[i], indices[j]] = [indices[j], indices[i]];
                     }
-                    
-                    // Count origins and continuations in this sample
-                    const continuationMap = new Map();
-                    events.forEach(event => {
-                        event.continuation.forEach(idx => {
-                            continuationMap.set(idx, event.origin);
-                        });
-                    });
+                    const sample = indices.slice(0, n);
                     
                     let originCount = 0;
                     let originSum = 0;
@@ -2107,7 +2080,9 @@
                     const totalDetections = originCount + continuationCount;
                     const biasedMean = totalDetections / n;
                     const biasedTotal = N * biasedMean;
-                    const biasedSampleVariance = biasedMean * (1 - biasedMean);
+                    // Compute variance from actual per-cell detection indicators
+                    const detectionValues = sample.map(idx => (population[idx] > 0 || continuationMap.has(idx)) ? 1 : 0);
+                    const biasedSampleVariance = detectionValues.reduce((sum, val) => sum + Math.pow(val - biasedMean, 2), 0) / (n - 1);
                     const biasedSE = N * fpc * Math.sqrt(biasedSampleVariance / n);
                     const biasedMargin = 1.96 * biasedSE;
                     
