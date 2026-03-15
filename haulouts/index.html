@@ -18,64 +18,64 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            line-height: 1.4; /* Slightly reduced line height */
+            line-height: 1.4;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 15px; /* Reduced padding */
+            padding: 15px;
             background-color: var(--background-color);
-            font-size: 16px; /* Reduced base font size */
+            font-size: 16px;
             color: var(--text-color);
         }
 
         h1 {
-            font-size: 1.8rem; /* Reduced from 2.2rem */
-            margin: 10px 0; /* Reduced margin */
+            font-size: 1.8rem;
+            margin: 10px 0;
         }
 
         p {
-            margin: 8px 0; /* Reduced margin */
-            font-size: 1rem; /* Reduced from 1.1rem */
+            margin: 8px 0;
+            font-size: 1rem;
         }
 
         .container {
-            margin-top: 15px; /* Reduced margin */
+            margin-top: 15px;
             background-color: #f9f9f9;
-            padding: 20px; /* Reduced padding */
-            border-radius: 10px; /* Slightly reduced */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
-            margin: 10px 0; /* Reduced margin */
+            margin: 10px 0;
         }
 
         label {
             display: block;
-            margin-bottom: 4px; /* Reduced margin */
+            margin-bottom: 4px;
             font-weight: bold;
-            font-size: 1rem; /* Reduced from 1.2rem */
+            font-size: 1rem;
         }
 
         input {
-            margin: 4px; /* Reduced margin */
-            padding: 8px; /* Reduced padding */
+            margin: 4px;
+            padding: 8px;
             width: 90%;
-            max-width: 350px; /* Slightly reduced */
+            max-width: 350px;
             border: 1px solid #ccc;
-            border-radius: 5px; /* Slightly reduced */
-            font-size: 1rem; /* Reduced from 1.1rem */
+            border-radius: 5px;
+            font-size: 1rem;
         }
 
         button {
-            padding: 8px 16px; /* Reduced padding */
+            padding: 8px 16px;
             cursor: pointer;
-            margin: 6px 4px; /* Reduced margin */
+            margin: 6px 4px;
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px; /* Slightly reduced */
+            border-radius: 5px;
             transition: background-color 0.3s;
-            font-size: 1rem; /* Reduced from 1.1rem */
+            font-size: 1rem;
             font-weight: bold;
         }
 
@@ -88,22 +88,56 @@
             cursor: not-allowed;
         }
 
+        .btn-skip {
+            background-color: #6c757d;
+        }
+
+        .btn-skip:hover {
+            background-color: #5a6268;
+        }
+
+        /* Image wrapper for spinner overlay */
+        .image-wrapper {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+
         img {
             max-width: 100%;
             height: auto;
-            border-radius: 10px; /* Slightly reduced */
-            margin-bottom: 10px; /* Reduced margin */
-            max-height: 1200px; /* Kept the same */
+            border-radius: 10px;
+            margin-bottom: 10px;
+            max-height: 1200px;
             object-fit: cover;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Kept the same */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s;
+        }
+
+        .spinner {
+            display: none;
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translateX(-50%) rotate(360deg); }
         }
 
         #result {
-            margin: 10px 0; /* Reduced margin */
-            padding: 10px; /* Reduced padding */
-            border-radius: 5px; /* Slightly reduced */
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
             font-weight: bold;
-            font-size: 1rem; /* Reduced from 1.2rem */
+            font-size: 1rem;
         }
 
         .correct {
@@ -121,19 +155,25 @@
             color: #8a6d3b;
         }
 
+        .scoring-note {
+            font-size: 0.8rem;
+            color: #777;
+            margin: 6px 0 2px;
+        }
+
         .progress {
-            margin: 10px 0; /* Reduced margin */
-            font-size: 0.9rem; /* Reduced from 1rem */
+            margin: 10px 0;
+            font-size: 0.9rem;
             font-weight: bold;
         }
 
         #location-list {
-            margin-top: 15px; /* Reduced margin */
-            padding: 10px; /* Reduced padding */
+            margin-top: 15px;
+            padding: 10px;
             background-color: var(--background-color);
-            border-radius: 10px; /* Slightly reduced */
+            border-radius: 10px;
             text-align: left;
-            max-height: 180px; /* Slightly reduced */
+            max-height: 180px;
             overflow-y: auto;
             display: none;
         }
@@ -142,23 +182,23 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 6px; /* Reduced gap */
+            gap: 6px;
         }
 
         .location-chip {
             background-color: #e0e0e0;
-            padding: 6px 10px; /* Reduced padding */
-            border-radius: 14px; /* Slightly reduced */
-            font-size: 0.9rem; /* Reduced from 1rem */
-            margin: 2px; /* Reduced margin */
+            padding: 6px 10px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            margin: 2px;
             display: inline-block;
         }
 
         .toggle-list {
             background-color: var(--primary-color);
             color: white;
-            font-size: 0.9rem; /* Reduced from 1rem */
-            padding: 6px 12px; /* Reduced padding */
+            font-size: 0.9rem;
+            padding: 6px 12px;
         }
 
         .toggle-list:hover {
@@ -167,16 +207,16 @@
 
         #completion-message {
             display: none;
-            margin-top: 20px; /* Reduced margin */
+            margin-top: 20px;
             background-color: #f9f9f9;
-            padding: 20px; /* Reduced padding */
-            border-radius: 10px; /* Slightly reduced */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         #completion-message h2 {
             margin-top: 0;
-            font-size: 1.5rem; /* Reduced from 2rem */
+            font-size: 1.5rem;
             color: #28a745;
         }
 
@@ -188,14 +228,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px; /* Reduced gap */
-            margin: 10px 0; /* Reduced margin */
+            gap: 10px;
+            margin: 10px 0;
         }
 
         .quiz-layout {
             display: flex;
             flex-direction: row;
-            gap: 20px; /* Reduced gap */
+            gap: 20px;
             align-items: flex-start;
         }
 
@@ -211,28 +251,29 @@
 
         .score-tracker {
             background-color: var(--background-color);
-            border-radius: 8px; /* Slightly reduced */
-            padding: 10px; /* Reduced padding */
-            margin: 10px 0; /* Reduced margin */
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px; /* Reduced gap */
+            gap: 15px;
             font-weight: bold;
-            font-size: 1rem; /* Reduced from 1.1rem */
+            font-size: 1rem;
+            flex-wrap: wrap;
         }
 
         .score-item {
             display: flex;
             align-items: center;
-            gap: 6px; /* Reduced gap */
+            gap: 6px;
         }
 
         .score-count {
             background-color: white;
             border-radius: 50%;
-            width: 30px; /* Reduced size */
-            height: 30px; /* Reduced size */
+            width: 30px;
+            height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -254,6 +295,53 @@
             color: #a94442;
         }
 
+        .skip-score .score-count {
+            border: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+        /* Review table */
+        #review-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        #review-section h3 {
+            text-align: center;
+        }
+
+        .review-scroll {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        #review-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        #review-table th {
+            background-color: #ddd;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #ccc;
+            position: sticky;
+            top: 0;
+        }
+
+        #review-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #review-table tr.correct td { background-color: var(--correct-color); }
+        #review-table tr.close td { background-color: var(--close-color); }
+        #review-table tr.incorrect td { background-color: var(--incorrect-color); }
+        #review-table tr.skipped td { background-color: #e8e8e8; color: #666; }
+
         @media (max-width: 900px) {
             .quiz-layout {
                 flex-direction: column;
@@ -266,7 +354,7 @@
 
             .score-tracker {
                 flex-direction: column;
-                gap: 8px; /* Reduced gap */
+                gap: 8px;
             }
         }
     </style>
@@ -275,12 +363,12 @@
     <div class="container">
         <h1>Oregon Pinniped Haulout Location Quiz</h1>
         <p>Look at the picture and guess the haulout location!</p>
-        
+
         <div id="quiz-controls">
-            <button id="start-button" onclick="startQuiz()">Start Quiz</button>
+            <button id="start-button">Start Quiz</button>
             <p class="progress hidden" id="progress">Image <span id="current-question">0</span> of <span id="total-questions">0</span></p>
         </div>
-        
+
         <div id="quiz-area" class="hidden">
             <div class="score-tracker" id="score-tracker">
                 <div class="score-item correct-score">
@@ -295,38 +383,51 @@
                     <span>Incorrect:</span>
                     <div class="score-count" id="incorrect-count">0</div>
                 </div>
+                <div class="score-item skip-score">
+                    <span>Skipped:</span>
+                    <div class="score-count" id="skip-count">0</div>
+                </div>
             </div>
-            
+
             <div class="quiz-layout">
                 <div class="quiz-image">
-                    <img id="locationImage" src="" alt="Haulout Location Image">
+                    <div class="image-wrapper">
+                        <div class="spinner" id="image-spinner"></div>
+                        <img id="locationImage" src="" alt="Image of a haulout location" style="opacity: 0;">
+                    </div>
                 </div>
-                
+
                 <div class="quiz-form">
-                    <form id="answer-form" onsubmit="checkGuess(event)">
+                    <form id="answer-form">
                         <div class="form-group">
                             <label for="guessInput">Location Name:</label>
-                            <input type="text" id="guessInput" placeholder="Enter location" required>
+                            <input type="text" id="guessInput" list="locations-datalist"
+                                   placeholder="Enter location" autocomplete="off" required>
+                            <datalist id="locations-datalist"></datalist>
                         </div>
-                        
-                        <button type="submit" id="submit-button">Submit</button>
-                        <button id="next-button" class="hidden" onclick="nextLocation()" disabled>Next</button>
+
+                        <div>
+                            <button type="submit" id="submit-button">Submit</button>
+                            <button type="button" id="skip-button" class="btn-skip">Skip</button>
+                            <button type="button" id="next-button" class="hidden" disabled>Next</button>
+                        </div>
                     </form>
-                    
+
                     <div id="result" aria-live="assertive"></div>
+                    <p class="scoring-note">Scoring: exact = Correct &nbsp;|&nbsp; ≥75% similar = Close (½ pt) &nbsp;|&nbsp; else Incorrect. Accuracy is weighted.</p>
                 </div>
             </div>
-            
+
             <div class="quiz-controls-row">
-                <button id="toggle-locations" class="toggle-list" onclick="toggleLocationList()">Show/Hide Location List</button>
+                <button id="toggle-locations" class="toggle-list">Show/Hide Location List</button>
             </div>
-            
+
             <div id="location-list">
                 <h3>All Locations (Alphabetically Sorted):</h3>
                 <div class="location-chips" id="location-chips"></div>
             </div>
         </div>
-        
+
         <div id="completion-message">
             <h2>Congratulations!</h2>
             <p>You've finished the Oregon Pinniped Haulout Location Quiz.</p>
@@ -344,17 +445,38 @@
                     <span>Incorrect:</span>
                     <div class="score-count" id="final-incorrect-count">0</div>
                 </div>
+                <div class="score-item skip-score">
+                    <span>Skipped:</span>
+                    <div class="score-count" id="final-skip-count">0</div>
+                </div>
             </div>
-            <p>Accuracy: <span id="accuracy-percentage">0%</span></p>
+            <p>Weighted Accuracy: <span id="accuracy-percentage">0%</span> <small>(Correct = 1 pt, Close = 0.5 pt, Skipped/Incorrect = 0 pt)</small></p>
+
+            <div id="review-section">
+                <h3>Answer Review</h3>
+                <div class="review-scroll">
+                    <table id="review-table">
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Your Answer</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="review-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button id="restart-button">Play Again</button>
         </div>
     </div>
-    
+
     <script>
-        // JavaScript remains unchanged from the previous version
         const locations = [
             { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Alsea_Bay_20240531.jpg", Name: "Alsea Bay" },
             { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Bandon_20240529.jpg", Name: "Bandon" },
-	    { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Blacklock_Point_20240529.jpg", Name: "Blacklock Point" },
+            { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Blacklock_Point_20240529.jpg", Name: "Blacklock Point" },
             { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Blanco_Reef_20240529.jpg", Name: "Blanco Reef" },
             { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Boiler_Bay_20240531.jpg", Name: "Boiler Bay" },
             { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Camas_Powerlines_20230427.jpg", Name: "Camas Powerlines" },
@@ -425,97 +547,140 @@
             { URL: "https://dfw.state.or.us/MRP/mammals/images/haulouts/Yaquina_Head_20240531.jpg", Name: "Yaquina Head" }
         ];
 
+        // --- State ---
+        let shuffledLocations = [];
+        let currentIndex = 0;
         let currentLocation;
-        let shownLocations = [];
-        let quizStarted = false;
         let questionAnswered = false;
-        let locationListVisible = false;
+        let answerHistory = [];
 
         let correctCount = 0;
         let closeCount = 0;
         let incorrectCount = 0;
+        let skipCount = 0;
+
+        // --- Fisher-Yates shuffle (replaces O(n²) do-while loop) ---
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
 
         function startQuiz() {
-            quizStarted = true;
+            shuffledLocations = shuffle(locations);
+            currentIndex = 0;
+            correctCount = 0;
+            closeCount = 0;
+            incorrectCount = 0;
+            skipCount = 0;
+            answerHistory = [];
+
             document.getElementById("quiz-area").classList.remove("hidden");
             document.getElementById("start-button").classList.add("hidden");
             document.getElementById("progress").classList.remove("hidden");
             document.getElementById("total-questions").textContent = locations.length;
             document.getElementById("completion-message").style.display = "none";
 
-            correctCount = 0;
-            closeCount = 0;
-            incorrectCount = 0;
             updateScoreDisplay();
-
-            shownLocations = [];
             populateLocationList();
-            nextLocation();
+            showCurrentLocation();
         }
 
-        function updateScoreDisplay() {
-            document.getElementById("correct-count").textContent = correctCount;
-            document.getElementById("close-count").textContent = closeCount;
-            document.getElementById("incorrect-count").textContent = incorrectCount;
-
-            document.getElementById("final-correct-count").textContent = correctCount;
-            document.getElementById("final-close-count").textContent = closeCount;
-            document.getElementById("final-incorrect-count").textContent = incorrectCount;
-
-            const totalAnswered = correctCount + closeCount + incorrectCount;
-            const accuracyPercentage = totalAnswered > 0 
-                ? Math.round((correctCount / totalAnswered) * 100) 
-                : 0;
-
-            document.getElementById("accuracy-percentage").textContent = `${accuracyPercentage}%`;
-        }
-
-        function populateLocationList() {
-            const chipContainer = document.getElementById("location-chips");
-            chipContainer.innerHTML = "";
-
-            const sortedLocations = [...locations].sort((a, b) => a.Name.localeCompare(b.Name));
-
-            sortedLocations.forEach(location => {
-                const chip = document.createElement("span");
-                chip.className = "location-chip";
-                chip.textContent = location.Name;
-                chipContainer.appendChild(chip);
-            });
-        }
-
-        function toggleLocationList() {
-            const locationList = document.getElementById("location-list");
-            locationListVisible = !locationListVisible;
-            locationList.style.display = locationListVisible ? "block" : "none";
-        }
-
-        function nextLocation() {
-            if (shownLocations.length === locations.length) {
+        function showCurrentLocation() {
+            if (currentIndex >= shuffledLocations.length) {
                 endQuiz();
                 return;
             }
 
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * locations.length);
-            } while (shownLocations.includes(randomIndex));
+            currentLocation = shuffledLocations[currentIndex];
 
-            shownLocations.push(randomIndex);
-            currentLocation = locations[randomIndex];
-            document.getElementById("locationImage").src = currentLocation.URL;
-            document.getElementById("locationImage").alt = "Image of a haulout location";
+            // Show spinner, fade out image while loading
+            const img = document.getElementById("locationImage");
+            const spinner = document.getElementById("image-spinner");
+            spinner.style.display = "block";
+            img.style.opacity = "0";
+            img.src = currentLocation.URL;
+            img.alt = "Image of a haulout location";
 
             document.getElementById("result").textContent = "";
             document.getElementById("result").className = "";
             document.getElementById("guessInput").value = "";
             document.getElementById("next-button").classList.add("hidden");
             document.getElementById("next-button").disabled = true;
+            document.getElementById("skip-button").classList.remove("hidden");
             document.getElementById("submit-button").disabled = false;
             document.getElementById("guessInput").focus();
 
-            document.getElementById("current-question").textContent = shownLocations.length;
+            document.getElementById("current-question").textContent = currentIndex + 1;
             questionAnswered = false;
+
+            // Preload next image in background
+            if (currentIndex + 1 < shuffledLocations.length) {
+                const preload = new Image();
+                preload.src = shuffledLocations[currentIndex + 1].URL;
+            }
+        }
+
+        function nextLocation() {
+            currentIndex++;
+            showCurrentLocation();
+        }
+
+        function skipQuestion() {
+            if (questionAnswered) return;
+            skipCount++;
+            answerHistory.push({ name: currentLocation.Name, guess: "(skipped)", result: "skipped" });
+            updateScoreDisplay();
+            currentIndex++;
+            showCurrentLocation();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById("correct-count").textContent = correctCount;
+            document.getElementById("close-count").textContent = closeCount;
+            document.getElementById("incorrect-count").textContent = incorrectCount;
+            document.getElementById("skip-count").textContent = skipCount;
+
+            document.getElementById("final-correct-count").textContent = correctCount;
+            document.getElementById("final-close-count").textContent = closeCount;
+            document.getElementById("final-incorrect-count").textContent = incorrectCount;
+            document.getElementById("final-skip-count").textContent = skipCount;
+
+            // Weighted accuracy: correct = 1pt, close = 0.5pt, incorrect/skipped = 0pt
+            const totalAnswered = correctCount + closeCount + incorrectCount;
+            const weightedCorrect = correctCount + 0.5 * closeCount;
+            const accuracyPercentage = totalAnswered > 0
+                ? Math.round((weightedCorrect / totalAnswered) * 100)
+                : 0;
+            document.getElementById("accuracy-percentage").textContent = `${accuracyPercentage}%`;
+        }
+
+        function populateLocationList() {
+            const chipContainer = document.getElementById("location-chips");
+            chipContainer.innerHTML = "";
+            const datalist = document.getElementById("locations-datalist");
+            datalist.innerHTML = "";
+
+            const sortedLocations = [...locations].sort((a, b) => a.Name.localeCompare(b.Name));
+            sortedLocations.forEach(location => {
+                const chip = document.createElement("span");
+                chip.className = "location-chip";
+                chip.textContent = location.Name;
+                chipContainer.appendChild(chip);
+
+                const option = document.createElement("option");
+                option.value = location.Name;
+                datalist.appendChild(option);
+            });
+        }
+
+        function toggleLocationList() {
+            const locationList = document.getElementById("location-list");
+            const isVisible = locationList.style.display === "block";
+            locationList.style.display = isVisible ? "none" : "block";
         }
 
         function levenshteinDistance(a, b) {
@@ -523,12 +688,8 @@
             if (b.length === 0) return a.length;
 
             const matrix = [];
-            for (let i = 0; i <= b.length; i++) {
-                matrix[i] = [i];
-            }
-            for (let j = 0; j <= a.length; j++) {
-                matrix[0][j] = j;
-            }
+            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
             for (let i = 1; i <= b.length; i++) {
                 for (let j = 1; j <= a.length; j++) {
@@ -543,25 +704,32 @@
                     }
                 }
             }
-
             return matrix[b.length][a.length];
         }
 
         function checkGuess(event) {
             event.preventDefault();
 
-            if (questionAnswered) return;
+            // If already answered, Enter acts as Next
+            if (questionAnswered) {
+                nextLocation();
+                return;
+            }
 
             const guess = document.getElementById("guessInput").value.trim();
+            if (!guess) return;
+
             const correctAnswer = currentLocation.Name;
             const result = document.getElementById("result");
 
             const normalizedGuess = guess.toLowerCase().replace(/\s+/g, " ");
             const normalizedAnswer = correctAnswer.toLowerCase().replace(/\s+/g, " ");
 
+            let resultType;
             if (normalizedGuess === normalizedAnswer) {
                 result.textContent = `Correct! The location is ${correctAnswer}.`;
                 result.className = "correct";
+                resultType = "correct";
                 correctCount++;
             } else {
                 const distance = levenshteinDistance(normalizedGuess, normalizedAnswer);
@@ -570,31 +738,71 @@
                 if (similarity >= 0.75) {
                     result.textContent = `Close! The correct location is ${correctAnswer}.`;
                     result.className = "close";
+                    resultType = "close";
                     closeCount++;
                 } else {
                     result.textContent = `Incorrect. The correct location is ${correctAnswer}.`;
                     result.className = "incorrect";
+                    resultType = "incorrect";
                     incorrectCount++;
                 }
             }
 
+            answerHistory.push({ name: correctAnswer, guess, result: resultType });
+
+            // Update alt text to reveal location name after answering
+            document.getElementById("locationImage").alt = `Haulout location: ${correctAnswer}`;
+
             updateScoreDisplay();
             questionAnswered = true;
             document.getElementById("submit-button").disabled = true;
+            document.getElementById("skip-button").classList.add("hidden");
             document.getElementById("next-button").classList.remove("hidden");
             document.getElementById("next-button").disabled = false;
+            document.getElementById("next-button").focus();
+        }
+
+        function buildReviewTable() {
+            const tbody = document.getElementById("review-tbody");
+            tbody.innerHTML = "";
+            answerHistory.forEach(entry => {
+                const tr = document.createElement("tr");
+                tr.className = entry.result;
+                const label = entry.result.charAt(0).toUpperCase() + entry.result.slice(1);
+                tr.innerHTML = `<td>${entry.name}</td><td>${entry.guess}</td><td>${label}</td>`;
+                tbody.appendChild(tr);
+            });
         }
 
         function endQuiz() {
             document.getElementById("quiz-area").classList.add("hidden");
             document.getElementById("completion-message").style.display = "block";
             updateScoreDisplay();
+            buildReviewTable();
         }
 
-        window.onload = function() {
+        window.addEventListener("load", function () {
             document.getElementById("location-list").style.display = "none";
+
+            document.getElementById("start-button").addEventListener("click", startQuiz);
+            document.getElementById("restart-button").addEventListener("click", startQuiz);
             document.getElementById("answer-form").addEventListener("submit", checkGuess);
-        };
+            document.getElementById("next-button").addEventListener("click", nextLocation);
+            document.getElementById("skip-button").addEventListener("click", skipQuestion);
+            document.getElementById("toggle-locations").addEventListener("click", toggleLocationList);
+
+            // Image loading indicator
+            const img = document.getElementById("locationImage");
+            const spinner = document.getElementById("image-spinner");
+            img.addEventListener("load", function () {
+                spinner.style.display = "none";
+                img.style.opacity = "1";
+            });
+            img.addEventListener("error", function () {
+                spinner.style.display = "none";
+                img.style.opacity = "1";
+            });
+        });
     </script>
 </body>
 </html>
