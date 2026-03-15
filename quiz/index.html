@@ -3,332 +3,712 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oregon Coast Haulout Location Quiz</title>
+    <title>Oregon Coast N/S Directional Quiz</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #45a049;
+            --correct-color: #dff0d8;
+            --partial-color: #fcf8e3;
+            --incorrect-color: #f2dede;
+            --background-color: #f0f0f0;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
             text-align: center;
-            line-height: 1.6;
+            line-height: 1.4;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
+            background-color: var(--background-color);
+            font-size: 16px;
+            color: var(--text-color);
         }
-        .container { 
-            margin-top: 30px; 
+
+        h1 {
+            font-size: 1.8rem;
+            margin: 10px 0;
+        }
+
+        p {
+            margin: 8px 0;
+            font-size: 1rem;
+        }
+
+        .container {
+            margin-top: 15px;
             background-color: #f9f9f9;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
         .form-group {
-            margin: 15px 0;
+            margin: 10px 0;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-weight: bold;
+            font-size: 1rem;
         }
-        input { 
-            margin: 5px; 
-            padding: 8px; 
-            width: 80%;
-            max-width: 300px;
+
+        input {
+            margin: 4px;
+            padding: 8px;
+            width: 90%;
+            max-width: 350px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 1rem;
         }
-        button { 
-            padding: 10px 15px; 
-            cursor: pointer; 
-            margin: 10px 5px;
-            background-color: #4CAF50;
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+            margin: 6px 4px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             transition: background-color 0.3s;
+            font-size: 1rem;
+            font-weight: bold;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: var(--secondary-color);
         }
+
         button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
         }
-        .hidden { 
-            display: none; 
+
+        .btn-skip {
+            background-color: #6c757d;
         }
-        #result {
-            margin: 15px 0;
+
+        .btn-skip:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #question {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 12px 0;
             padding: 10px;
-            border-radius: 4px;
+            background-color: #e8f5e9;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            text-align: left;
         }
+
+        #result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
         .correct {
-            background-color: #dff0d8;
+            background-color: var(--correct-color);
             color: #3c763d;
         }
+
+        .partial {
+            background-color: var(--partial-color);
+            color: #8a6d3b;
+        }
+
         .incorrect {
-            background-color: #f2dede;
+            background-color: var(--incorrect-color);
             color: #a94442;
         }
-        .progress {
-            margin: 20px 0;
-            font-size: 14px;
+
+        .scoring-note {
+            font-size: 0.8rem;
+            color: #777;
+            margin: 6px 0 2px;
         }
+
+        .progress {
+            margin: 10px 0;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
         #location-list {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: var(--background-color);
+            border-radius: 10px;
             text-align: left;
             max-height: 200px;
             overflow-y: auto;
+            display: none;
         }
-        #location-list h3 {
-            margin-top: 0;
-        }
+
         .location-chips {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
+
         .location-chip {
             background-color: #e0e0e0;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 14px;
-            margin: 4px;
+            padding: 6px 10px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            margin: 2px;
             display: inline-block;
         }
+
         .toggle-list {
             background-color: #007bff;
             color: white;
+            font-size: 0.9rem;
+            padding: 6px 12px;
         }
+
         .toggle-list:hover {
             background-color: #0069d9;
+        }
+
+        .score-tracker {
+            background-color: var(--background-color);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .score-count {
+            background-color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .correct-score .score-count {
+            border: 2px solid #28a745;
+            color: #28a745;
+        }
+
+        .partial-score .score-count {
+            border: 2px solid #ffc107;
+            color: #8a6d3b;
+        }
+
+        .incorrect-score .score-count {
+            border: 2px solid #dc3545;
+            color: #a94442;
+        }
+
+        .skip-score .score-count {
+            border: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+        #completion-message {
+            display: none;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #completion-message h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #28a745;
+        }
+
+        .quiz-controls-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        /* Review table */
+        #review-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        #review-section h3 {
+            text-align: center;
+        }
+
+        .review-scroll {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        #review-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        #review-table th {
+            background-color: #ddd;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #ccc;
+            position: sticky;
+            top: 0;
+        }
+
+        #review-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #review-table tr.correct td { background-color: var(--correct-color); }
+        #review-table tr.partial td { background-color: var(--partial-color); }
+        #review-table tr.incorrect td { background-color: var(--incorrect-color); }
+        #review-table tr.skipped td { background-color: #e8e8e8; color: #666; }
+
+        @media (max-width: 600px) {
+            .score-tracker {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            #review-table th, #review-table td {
+                padding: 4px 5px;
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Oregon Coast Haulout Location Quiz</h1>
-        <p>Test your knowledge of Oregon coastal locations by identifying what's north and south of a given haulout.</p>
-        
+        <h1>Oregon Coast N/S Directional Quiz</h1>
+        <p>Given a haulout location, name what's immediately north and south of it.</p>
+
         <div id="quiz-controls">
-            <button id="start-button" onclick="startQuiz()">Start Quiz</button>
+            <button id="start-button">Start Quiz</button>
             <p class="progress hidden" id="progress">Question <span id="current-question">0</span> of <span id="total-questions">0</span></p>
         </div>
-        
+
         <div id="quiz-area" class="hidden">
+            <div class="score-tracker">
+                <div class="score-item correct-score">
+                    <span>Correct:</span>
+                    <div class="score-count" id="correct-count">0</div>
+                </div>
+                <div class="score-item partial-score">
+                    <span>Partial:</span>
+                    <div class="score-count" id="partial-count">0</div>
+                </div>
+                <div class="score-item incorrect-score">
+                    <span>Incorrect:</span>
+                    <div class="score-count" id="incorrect-count">0</div>
+                </div>
+                <div class="score-item skip-score">
+                    <span>Skipped:</span>
+                    <div class="score-count" id="skip-count">0</div>
+                </div>
+            </div>
+
             <p id="question" aria-live="polite"></p>
-            
-            <form id="answer-form" onsubmit="checkAnswer(event)">
+
+            <form id="answer-form">
                 <div class="form-group">
                     <label for="northGuess">North Location:</label>
-                    <input type="text" id="northGuess" aria-label="North Location" required>
+                    <input type="text" id="northGuess" list="locations-datalist"
+                           aria-label="North Location" autocomplete="off" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="southGuess">South Location:</label>
-                    <input type="text" id="southGuess" aria-label="South Location" required>
+                    <input type="text" id="southGuess" list="locations-datalist"
+                           aria-label="South Location" autocomplete="off" required>
                 </div>
-                
-                <button type="submit" id="submit-button">Submit Answer</button>
+
+                <datalist id="locations-datalist"></datalist>
+
+                <div>
+                    <button type="submit" id="submit-button">Submit Answer</button>
+                    <button type="button" id="skip-button" class="btn-skip">Skip</button>
+                    <button type="button" id="next-button" class="hidden" disabled>Next Question</button>
+                </div>
             </form>
-            
+
             <div id="result" aria-live="assertive"></div>
-            
-            <button id="next-button" class="hidden" onclick="newQuestion()">Next Question</button>
-            
-            <button id="toggle-locations" class="toggle-list" onclick="toggleLocationList()">Show/Hide Location List</button>
-            
-            <div id="location-list" class="hidden">
-                <h3>All Locations (Randomly Ordered):</h3>
+            <p class="scoring-note">Both correct = full point &nbsp;|&nbsp; one correct = half point &nbsp;|&nbsp; ≥75% similar counts as correct</p>
+
+            <div class="quiz-controls-row">
+                <button id="toggle-locations" class="toggle-list">Show/Hide Location List</button>
+            </div>
+
+            <div id="location-list">
+                <h3>All Locations (North &rarr; South):</h3>
                 <div class="location-chips" id="location-chips"></div>
             </div>
         </div>
+
+        <div id="completion-message">
+            <h2>Congratulations!</h2>
+            <p>You've completed the Oregon Coast N/S Directional Quiz.</p>
+            <p>Final Score:</p>
+            <div class="score-tracker">
+                <div class="score-item correct-score">
+                    <span>Correct:</span>
+                    <div class="score-count" id="final-correct-count">0</div>
+                </div>
+                <div class="score-item partial-score">
+                    <span>Partial:</span>
+                    <div class="score-count" id="final-partial-count">0</div>
+                </div>
+                <div class="score-item incorrect-score">
+                    <span>Incorrect:</span>
+                    <div class="score-count" id="final-incorrect-count">0</div>
+                </div>
+                <div class="score-item skip-score">
+                    <span>Skipped:</span>
+                    <div class="score-count" id="final-skip-count">0</div>
+                </div>
+            </div>
+            <p>Weighted Accuracy: <span id="accuracy-percentage">0%</span> <small>(Correct = 1 pt, Partial = 0.5 pt, Skipped/Incorrect = 0 pt)</small></p>
+
+            <div id="review-section">
+                <h3>Answer Review</h3>
+                <div class="review-scroll">
+                    <table id="review-table">
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Your North</th>
+                                <th>Your South</th>
+                                <th>Correct North</th>
+                                <th>Correct South</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="review-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button id="restart-button">Play Again</button>
+        </div>
     </div>
-    
+
     <script>
-        // Oregon coast locations array from north to south
+        // Oregon coast locations array, ordered north to south
         const locations = [
-            "Columbia River", "Tillamook Head", "Tillamook Rock Lighthouse", "Ecola Point", 
-            "Cape Falcon", "Nehalem River", "Tillamook Bay", "Three Arch Rocks", 
-            "Netarts Bay", "Cape Lookout", "Nestucca Bay", "Cascade Head", 
-            "Siletz Bay", "Fogarty Creek", "Boiler Bay", "Pirate Cove", 
-            "Whale Cove", "Cape Foulweather", "Yaquina Head", "Yaquina Bay", 
-            "Seal Rock", "Alsea Bay", "Cape Perpetua", "Strawberry Hill", 
-            "Tokatee Klootchman", "Sea Lion Caves", "Siuslaw River", "Siltcoos Lake Outlet", 
-            "Tahkenitch Lake Outlet", "Umpqua River", "Tenmile Lake Outlet", "Coos Bay", 
-            "Qochyax Island", "Shore Acres", "Cape Arago", "Fivemile Point", 
-            "Bandon", "Blacklock Point", "Castle Rock", "Gull Rock", 
-            "Cape Blanco", "Blanco Reef", "Orford Reef", "Port Orford Heads", 
-            "Humbug Mountain", "Devils Backbone", "Hubbard Mound", "Rogue Reef", 
-            "Rogue River", "Hunters Island", "Pistol River", "Mack Reef-Crook Point", 
-            "Whiskey Creek", "Deer Point", "Whalehead", "House Rock", 
+            "Columbia River", "Tillamook Head", "Tillamook Rock Lighthouse", "Ecola Point",
+            "Cape Falcon", "Nehalem River", "Tillamook Bay", "Three Arch Rocks",
+            "Netarts Bay", "Cape Lookout", "Nestucca Bay", "Cascade Head",
+            "Siletz Bay", "Fogarty Creek", "Boiler Bay", "Pirate Cove",
+            "Whale Cove", "Cape Foulweather", "Yaquina Head", "Yaquina Bay",
+            "Seal Rock", "Alsea Bay", "Cape Perpetua", "Strawberry Hill",
+            "Tokatee Klootchman", "Sea Lion Caves", "Siuslaw River", "Siltcoos Lake Outlet",
+            "Tahkenitch Lake Outlet", "Umpqua River", "Tenmile Lake Outlet", "Coos Bay",
+            "Qochyax Island", "Shore Acres", "Cape Arago", "Fivemile Point",
+            "Bandon", "Blacklock Point", "Castle Rock", "Gull Rock",
+            "Cape Blanco", "Blanco Reef", "Orford Reef", "Port Orford Heads",
+            "Humbug Mountain", "Devils Backbone", "Hubbard Mound", "Rogue Reef",
+            "Rogue River", "Hunters Island", "Pistol River", "Mack Reef-Crook Point",
+            "Whiskey Creek", "Deer Point", "Whalehead", "House Rock",
             "Cape Ferrelo-Brookings"
         ];
-        
+
+        // --- State ---
+        let shuffledIndices = [];
+        let currentShufflePos = 0;
         let currentIndex;
-        let answeredQuestions = 0;
-        let quizStarted = false;
         let questionAnswered = false;
-        let askedIndices = [];
-        let locationListVisible = false;
-        
+        let answerHistory = [];
+
+        let correctCount = 0;
+        let partialCount = 0;
+        let incorrectCount = 0;
+        let skipCount = 0;
+
+        // --- Fisher-Yates shuffle ---
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
         function startQuiz() {
-            quizStarted = true;
+            // Only interior indices have both a north and south neighbor
+            const interiorIndices = [];
+            for (let i = 1; i < locations.length - 1; i++) interiorIndices.push(i);
+            shuffledIndices = shuffle(interiorIndices);
+            currentShufflePos = 0;
+
+            correctCount = 0;
+            partialCount = 0;
+            incorrectCount = 0;
+            skipCount = 0;
+            answerHistory = [];
+
             document.getElementById("quiz-area").classList.remove("hidden");
             document.getElementById("start-button").classList.add("hidden");
             document.getElementById("progress").classList.remove("hidden");
-            document.getElementById("total-questions").textContent = locations.length - 2;
-            askedIndices = [];
-            answeredQuestions = 0;
+            document.getElementById("total-questions").textContent = shuffledIndices.length;
+            document.getElementById("completion-message").style.display = "none";
+
+            updateScoreDisplay();
             populateLocationList();
-            newQuestion();
+            showQuestion();
         }
-        
-        function populateLocationList() {
-            const chipContainer = document.getElementById("location-chips");
-            chipContainer.innerHTML = "";
-            
-            // Create a copy of the locations array and shuffle it
-            const shuffledLocations = [...locations].sort(() => Math.random() - 0.5);
-            
-            // Create a chip for each location
-            shuffledLocations.forEach(location => {
-                const chip = document.createElement("span");
-                chip.className = "location-chip";
-                chip.textContent = location;
-                chipContainer.appendChild(chip);
-            });
-        }
-        
-        function toggleLocationList() {
-            const locationList = document.getElementById("location-list");
-            locationListVisible = !locationListVisible;
-            
-            if (locationListVisible) {
-                locationList.classList.remove("hidden");
-            } else {
-                locationList.classList.add("hidden");
-            }
-        }
-        
-        function newQuestion() {
-            // Ensure we don't repeat questions until all have been asked
-            if (askedIndices.length >= locations.length - 2) {
+
+        function showQuestion() {
+            if (currentShufflePos >= shuffledIndices.length) {
                 endQuiz();
                 return;
             }
-            
-            let availableIndices = [];
-            for (let i = 1; i < locations.length - 1; i++) {
-                if (!askedIndices.includes(i)) {
-                    availableIndices.push(i);
-                }
-            }
-            
-            if (availableIndices.length === 0) {
-                endQuiz();
-                return;
-            }
-            
-            // Choose a random index from available indices
-            const randomIdx = Math.floor(Math.random() * availableIndices.length);
-            currentIndex = availableIndices[randomIdx];
-            askedIndices.push(currentIndex);
-            
-            document.getElementById("question").textContent = 
+
+            currentIndex = shuffledIndices[currentShufflePos];
+
+            document.getElementById("question").textContent =
                 `What locations are immediately north and south of: ${locations[currentIndex]}?`;
-            
+
             document.getElementById("result").textContent = "";
             document.getElementById("result").className = "";
             document.getElementById("northGuess").value = "";
             document.getElementById("southGuess").value = "";
-            document.getElementById("northGuess").focus();
             document.getElementById("next-button").classList.add("hidden");
+            document.getElementById("next-button").disabled = true;
+            document.getElementById("skip-button").classList.remove("hidden");
             document.getElementById("submit-button").disabled = false;
-            
-            document.getElementById("current-question").textContent = answeredQuestions + 1;
+            document.getElementById("northGuess").focus();
+
+            document.getElementById("current-question").textContent = currentShufflePos + 1;
             questionAnswered = false;
         }
-        
-        function checkAnswer(event) {
-            if (event) event.preventDefault();
+
+        function nextQuestion() {
+            currentShufflePos++;
+            showQuestion();
+        }
+
+        function skipQuestion() {
             if (questionAnswered) return;
-            
-            let northGuess = document.getElementById("northGuess").value.trim();
-            let southGuess = document.getElementById("southGuess").value.trim();
-            let correctNorth = locations[currentIndex - 1];
-            let correctSouth = locations[currentIndex + 1];
-            
-            // Simple fuzzy matching
+            skipCount++;
+            answerHistory.push({
+                location: locations[currentIndex],
+                northGuess: "(skipped)",
+                southGuess: "(skipped)",
+                correctNorth: locations[currentIndex - 1],
+                correctSouth: locations[currentIndex + 1],
+                result: "skipped"
+            });
+            updateScoreDisplay();
+            currentShufflePos++;
+            showQuestion();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById("correct-count").textContent = correctCount;
+            document.getElementById("partial-count").textContent = partialCount;
+            document.getElementById("incorrect-count").textContent = incorrectCount;
+            document.getElementById("skip-count").textContent = skipCount;
+
+            document.getElementById("final-correct-count").textContent = correctCount;
+            document.getElementById("final-partial-count").textContent = partialCount;
+            document.getElementById("final-incorrect-count").textContent = incorrectCount;
+            document.getElementById("final-skip-count").textContent = skipCount;
+
+            const totalAnswered = correctCount + partialCount + incorrectCount;
+            const weightedCorrect = correctCount + 0.5 * partialCount;
+            const accuracyPercentage = totalAnswered > 0
+                ? Math.round((weightedCorrect / totalAnswered) * 100)
+                : 0;
+            document.getElementById("accuracy-percentage").textContent = `${accuracyPercentage}%`;
+        }
+
+        function populateLocationList() {
+            const chipContainer = document.getElementById("location-chips");
+            chipContainer.innerHTML = "";
+            const datalist = document.getElementById("locations-datalist");
+            datalist.innerHTML = "";
+
+            // Show in N→S order — the geographic sequence that helps with this quiz
+            locations.forEach(location => {
+                const chip = document.createElement("span");
+                chip.className = "location-chip";
+                chip.textContent = location;
+                chipContainer.appendChild(chip);
+
+                const option = document.createElement("option");
+                option.value = location;
+                datalist.appendChild(option);
+            });
+        }
+
+        function toggleLocationList() {
+            const locationList = document.getElementById("location-list");
+            const isVisible = locationList.style.display === "block";
+            locationList.style.display = isVisible ? "none" : "block";
+        }
+
+        function levenshteinDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+            const matrix = [];
+            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        function compareAnswers(userAnswer, correctAnswer) {
+            const a = userAnswer.toLowerCase().replace(/\s+/g, " ").trim();
+            const b = correctAnswer.toLowerCase().replace(/\s+/g, " ").trim();
+            if (a === b) return true;
+            const distance = levenshteinDistance(a, b);
+            const similarity = 1 - (distance / Math.max(a.length, b.length));
+            return similarity >= 0.75;
+        }
+
+        function checkAnswer(event) {
+            event.preventDefault();
+
+            // If already answered, Enter acts as Next
+            if (questionAnswered) {
+                nextQuestion();
+                return;
+            }
+
+            const northGuess = document.getElementById("northGuess").value.trim();
+            const southGuess = document.getElementById("southGuess").value.trim();
+            const correctNorth = locations[currentIndex - 1];
+            const correctSouth = locations[currentIndex + 1];
+
             const northCorrect = compareAnswers(northGuess, correctNorth);
             const southCorrect = compareAnswers(southGuess, correctSouth);
-            
-            let resultElement = document.getElementById("result");
+
+            const resultElement = document.getElementById("result");
             let feedback = "";
-            
+            let resultType;
+
             if (northCorrect && southCorrect) {
-                feedback = `Correct! The locations are ${correctNorth} (north) and ${correctSouth} (south).`;
+                feedback = `Correct! ${correctNorth} (north) and ${correctSouth} (south).`;
                 resultElement.className = "correct";
+                resultType = "correct";
+                correctCount++;
+            } else if (northCorrect || southCorrect) {
+                feedback = northCorrect
+                    ? `Partial. North correct (${correctNorth}). South: ${correctSouth}.`
+                    : `Partial. South correct (${correctSouth}). North: ${correctNorth}.`;
+                resultElement.className = "partial";
+                resultType = "partial";
+                partialCount++;
             } else {
-                feedback = `Incorrect. The correct locations are ${correctNorth} (north) and ${correctSouth} (south).`;
+                feedback = `Incorrect. ${correctNorth} (north) and ${correctSouth} (south).`;
                 resultElement.className = "incorrect";
-                
-                if (northCorrect) {
-                    feedback += ` Your north answer was correct.`;
-                }
-                if (southCorrect) {
-                    feedback += ` Your south answer was correct.`;
-                }
+                resultType = "incorrect";
+                incorrectCount++;
             }
-            
+
             resultElement.textContent = feedback;
-            document.getElementById("submit-button").disabled = true;
-            document.getElementById("next-button").classList.remove("hidden");
-            
+
+            answerHistory.push({
+                location: locations[currentIndex],
+                northGuess,
+                southGuess,
+                correctNorth,
+                correctSouth,
+                result: resultType
+            });
+
+            updateScoreDisplay();
             questionAnswered = true;
-            answeredQuestions++;
+            document.getElementById("submit-button").disabled = true;
+            document.getElementById("skip-button").classList.add("hidden");
+            document.getElementById("next-button").classList.remove("hidden");
+            document.getElementById("next-button").disabled = false;
+            document.getElementById("next-button").focus();
         }
-        
-        function compareAnswers(userAnswer, correctAnswer) {
-            // Case insensitive comparison
-            userAnswer = userAnswer.toLowerCase();
-            correctAnswer = correctAnswer.toLowerCase();
-            
-            // Exact match
-            if (userAnswer === correctAnswer) return true;
-            
-            // Check for close match (remove punctuation, allow partial match)
-            const cleanUser = userAnswer.replace(/[^\w\s]/gi, '').replace(/\s+/g, '');
-            const cleanCorrect = correctAnswer.replace(/[^\w\s]/gi, '').replace(/\s+/g, '');
-            
-            // Allow matches where user answer contains at least 70% of correct answer
-            // or correct answer contains user answer
-            return cleanCorrect.includes(cleanUser) || 
-                   (cleanUser.length >= cleanCorrect.length * 0.7 && 
-                    cleanUser.includes(cleanCorrect.substring(0, Math.floor(cleanCorrect.length * 0.7))));
+
+        function buildReviewTable() {
+            const tbody = document.getElementById("review-tbody");
+            tbody.innerHTML = "";
+            answerHistory.forEach(entry => {
+                const tr = document.createElement("tr");
+                tr.className = entry.result;
+                const label = entry.result.charAt(0).toUpperCase() + entry.result.slice(1);
+                tr.innerHTML = `
+                    <td>${entry.location}</td>
+                    <td>${entry.northGuess}</td>
+                    <td>${entry.southGuess}</td>
+                    <td>${entry.correctNorth}</td>
+                    <td>${entry.correctSouth}</td>
+                    <td>${label}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
-        
+
         function endQuiz() {
             document.getElementById("quiz-area").classList.add("hidden");
-            document.getElementById("start-button").classList.remove("hidden");
-            document.getElementById("start-button").textContent = "Restart Quiz";
-            document.getElementById("progress").classList.add("hidden");
-            
-            let resultElement = document.getElementById("result");
-            resultElement.textContent = "Congratulations! You've completed all questions.";
-            resultElement.className = "correct";
-            resultElement.classList.remove("hidden");
+            document.getElementById("completion-message").style.display = "block";
+            updateScoreDisplay();
+            buildReviewTable();
         }
-        
-        // Handle Enter key in the form
-        document.getElementById("answer-form").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                checkAnswer();
-            }
+
+        window.addEventListener("load", function () {
+            document.getElementById("location-list").style.display = "none";
+
+            document.getElementById("start-button").addEventListener("click", startQuiz);
+            document.getElementById("restart-button").addEventListener("click", startQuiz);
+            document.getElementById("answer-form").addEventListener("submit", checkAnswer);
+            document.getElementById("next-button").addEventListener("click", nextQuestion);
+            document.getElementById("skip-button").addEventListener("click", skipQuestion);
+            document.getElementById("toggle-locations").addEventListener("click", toggleLocationList);
         });
     </script>
 </body>
