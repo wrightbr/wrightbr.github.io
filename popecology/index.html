@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Population Ecology</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Charter', 'Georgia', serif; background: #f0fdf4; }
+    #root { width: 100%; min-height: 100vh; }
+
+    .app { min-height: 100vh; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); color: #1e293b; }
+
+    .navbar {
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(22,163,74,0.15);
+      padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: #16a34a; font-family: 'SF Pro Display', -apple-system, sans-serif; letter-spacing: -0.03em; }
+    .nav-brand-symbol { font-size: 2rem; font-weight: 300; line-height: 1; }
+    .nav-brand-title { font-size: 1.375rem; font-weight: 700; line-height: 1; }
+    .nav-brand-subtitle { font-size: 0.6rem; font-weight: 400; color: #64748b; font-style: italic; line-height: 1; }
+    .nav-links { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+    .nav-links button {
+      background: transparent; border: none; color: #64748b;
+      padding: 0.4rem 0.75rem; border-radius: 7px; cursor: pointer;
+      font-size: 0.8125rem; font-family: 'SF Pro Text', -apple-system, sans-serif;
+      font-weight: 500; transition: all 0.2s;
+    }
+    .nav-links button:hover { background: rgba(22,163,74,0.08); color: #1e293b; }
+    .nav-links button.active { background: #16a34a; color: white; }
+
+    .main-content { max-width: 1400px; margin: 0 auto; padding: 1.25rem; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .home-section, .section-content { animation: fadeIn 0.45s ease-out; }
+
+    .hero { text-align: center; padding: 3.5rem 2rem 3rem; }
+    .hero h1 {
+      font-size: 3.5rem; font-weight: 700; margin-bottom: 0.875rem;
+      background: linear-gradient(135deg, #14532d 0%, #16a34a 60%, #4ade80 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      letter-spacing: -0.04em; font-family: 'SF Pro Display', -apple-system, sans-serif;
+    }
+    .hero-subtitle { font-size: 1.25rem; color: #475569; margin-bottom: 2.5rem; }
+    .hero-stats { display: flex; justify-content: center; gap: 4rem; }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.5rem; font-weight: 700; color: #16a34a; margin-bottom: 0.25rem; font-family: 'SF Pro Display', -apple-system, sans-serif; }
+    .stat-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+
+    .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .topic-card {
+      background: white; border: 1px solid #d1fae5; border-radius: 16px;
+      padding: 2rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .topic-card:hover { transform: translateY(-6px); border-color: rgba(22,163,74,0.4); box-shadow: 0 12px 24px rgba(22,163,74,0.12); }
+    .topic-icon { width: 52px; height: 52px; background: linear-gradient(135deg, #16a34a, #15803d); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.125rem; font-size: 1.5rem; }
+    .topic-card h3 { font-size: 1.375rem; margin-bottom: 0.625rem; color: #1e293b; font-weight: 600; letter-spacing: -0.02em; font-family: 'SF Pro Display', -apple-system, sans-serif; }
+    .topic-card p { color: #475569; line-height: 1.6; margin-bottom: 1rem; font-size: 0.9rem; }
+    .topic-arrow { color: #16a34a; font-weight: 600; font-size: 0.9rem; display: inline-block; transition: transform 0.2s; }
+    .topic-card:hover .topic-arrow { transform: translateX(5px); }
+
+    .section-header { text-align: center; margin-bottom: 1rem; }
+    .section-header h2 { font-size: 1.5rem; font-weight: 600; color: #1e293b; letter-spacing: -0.03em; font-family: 'SF Pro Display', -apple-system, sans-serif; margin-bottom: 0.25rem; }
+    .section-header p { font-size: 0.8125rem; color: #475569; max-width: 640px; margin: 0 auto; }
+
+    .simulator-layout {
+      display: flex; gap: 1.25rem;
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 1.25rem; min-height: 500px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .controls-panel {
+      width: 270px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.875rem;
+      overflow-y: auto; padding-right: 0.375rem;
+    }
+    .controls-panel::-webkit-scrollbar { width: 4px; }
+    .controls-panel::-webkit-scrollbar-thumb { background: #d1fae5; border-radius: 2px; }
+    .results-panel { flex: 1; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; min-width: 0; }
+
+    .control-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .control-group label { font-size: 0.75rem; font-weight: 600; color: #374151; }
+    .control-group select { border: 1px solid #d1d5db; border-radius: 6px; padding: 0.35rem 0.5rem; font-size: 0.8125rem; color: #1e293b; background: white; }
+    .control-group select:focus { outline: none; border-color: #16a34a; }
+
+    .slider-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .slider-row { display: flex; justify-content: space-between; align-items: center; }
+    .slider-row span { font-size: 0.75rem; font-weight: 600; color: #374151; }
+    .slider-value { font-size: 0.8125rem; font-weight: 700; color: #16a34a; min-width: 44px; text-align: right; }
+    input[type="range"] { width: 100%; accent-color: #16a34a; cursor: pointer; }
+
+    .btn { padding: 0.45rem 0.9rem; border-radius: 7px; border: none; cursor: pointer; font-size: 0.8125rem; font-weight: 600; transition: all 0.18s; font-family: 'SF Pro Text', -apple-system, sans-serif; }
+    .btn-primary { background: #16a34a; color: white; }
+    .btn-primary:hover { background: #15803d; transform: translateY(-1px); }
+    .btn-secondary { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: #fff1f2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .stat-box { background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 7px; padding: 0.6rem; text-align: center; }
+    .stat-box-value { font-size: 1.125rem; font-weight: 700; color: #16a34a; font-family: 'SF Pro Display', -apple-system, sans-serif; }
+    .stat-box-label { font-size: 0.625rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 0.1rem; }
+
+    .chart-container { background: #fafafa; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.875rem; }
+    .chart-title { font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; text-align: center; }
+    .chart-row { display: flex; gap: 0.75rem; }
+    .chart-half { flex: 1; min-width: 0; }
+
+    .info-card { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 0.75rem; }
+    .info-card p { font-size: 0.78rem; color: #14532d; line-height: 1.55; }
+    .info-card strong { color: #16a34a; }
+
+    .formula-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 0.6rem; font-family: 'Courier New', monospace; font-size: 0.78rem; color: #374151; text-align: center; line-height: 1.7; }
+
+    .bide-breakdown { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem; font-size: 0.78rem; color: #374151; line-height: 1.8; }
+    .bide-pos { color: #16a34a; font-weight: 700; }
+    .bide-neg { color: #dc2626; font-weight: 700; }
+
+    .surv-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    .surv-table th { background: #f0fdf4; color: #374151; font-weight: 600; padding: 0.35rem 0.5rem; border: 1px solid #d1fae5; text-align: center; }
+    .surv-table td { padding: 0.3rem 0.5rem; border: 1px solid #f1f5f9; text-align: center; color: #475569; }
+    .surv-table tr:nth-child(even) td { background: #fafafa; }
+
+    .divider { height: 1px; background: #f1f5f9; margin: 0.125rem 0; flex-shrink: 0; }
+    .section-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; }
+
+    @media (max-width: 800px) {
+      .simulator-layout { flex-direction: column; }
+      .controls-panel { width: 100%; }
+      .hero h1 { font-size: 2.25rem; }
+      .hero-stats { gap: 2rem; }
+      .nav-links { display: none; }
+      .chart-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo, useRef } = React;
+
+    // ── Utilities ──────────────────────────────────────────────────────────────
+
+    function fmtN(v) {
+      if (!isFinite(v)) return '∞';
+      if (v >= 1e6) return (v/1e6).toFixed(2) + 'M';
+      if (v >= 1e3) return (v/1e3).toFixed(1) + 'K';
+      return v.toFixed(v < 10 ? 1 : 0);
+    }
+
+    function fmtR(v) { return v.toFixed(3); }
+
+    // BIDE: N(t+1) = N(t)*(1 + b - d) + I - E
+    function simBIDE(N0, b, d, I, E, years) {
+      const pts = [{ t: 0, N: N0, born: 0, died: 0, imm: 0, emi: 0 }];
+      let N = N0;
+      for (let t = 1; t <= years; t++) {
+        const born = b * N, died = d * N;
+        N = Math.max(0, N + born - died + I - E);
+        pts.push({ t, N, born, died, imm: I, emi: E });
+      }
+      return pts;
+    }
+
+    // Continuous exponential: N(t) = N0 * e^(r*t)
+    function simExponential(N0, r, years) {
+      return Array.from({ length: years + 1 }, (_, t) => ({ t, N: N0 * Math.exp(r * t) }));
+    }
+
+    // Continuous logistic: analytical solution
+    function simLogistic(N0, r, K, years) {
+      if (N0 <= 0 || K <= 0) return [];
+      return Array.from({ length: years + 1 }, (_, t) => ({
+        t, N: K / (1 + ((K / N0) - 1) * Math.exp(-r * t))
+      }));
+    }
+
+    // Discrete logistic: N(t+1) = N(t) + r*N(t)*(1 - N(t)/K)
+    function simDiscrete(N0, r, K, years) {
+      const pts = [{ t: 0, N: N0 }];
+      let N = N0;
+      for (let t = 1; t <= years; t++) {
+        N = Math.max(0, N + r * N * (1 - N / K));
+        if (N > K * 10) { pts.push({ t, N: K * 10 }); break; }
+        pts.push({ t, N });
+      }
+      return pts;
+    }
+
+    // Survivorship curves
+    function computeSurvivorship(maxAge = 20) {
+      const ages = Array.from({ length: maxAge + 1 }, (_, i) => i);
+      // Type I: low early mortality, steep decline near max age (Weibull k>1)
+      const lI  = ages.map(x => Math.exp(-0.001 * x ** 3));
+      // Type II: constant mortality (exponential)
+      const lII = ages.map(x => Math.exp(-0.17 * x));
+      // Type III: high early mortality, survivors do well (concave on log scale)
+      const lIII = ages.map(x => x === 0 ? 1 : Math.exp(-2.2 * Math.sqrt(x)));
+
+      return ages.map((x, i) => {
+        const make = (lArr) => {
+          const l = lArr[i] / lArr[0];
+          const lnext = i < lArr.length - 1 ? lArr[i+1] / lArr[0] : 0;
+          const dx = Math.max(0, l - lnext);
+          return { lx: l, dx, qx: l > 0 ? dx / l : 1 };
+        };
+        return { x, I: make(lI), II: make(lII), III: make(lIII) };
+      });
+    }
+
+    // Lotka-Volterra with RK4 integration
+    function simLV(N0, P0, rN, alpha, beta, delta, tMax = 100) {
+      const steps = 4000;
+      const dt = tMax / steps;
+      const every = Math.max(1, Math.floor(steps / 300));
+      const pts = [{ t: 0, N: N0, P: P0 }];
+      let N = N0, P = P0;
+
+      for (let i = 1; i <= steps; i++) {
+        // RK4
+        const f = (n, p) => ({ dN: rN*n - alpha*n*p, dP: beta*n*p - delta*p });
+        const k1 = f(N, P);
+        const k2 = f(N + k1.dN*dt/2, P + k1.dP*dt/2);
+        const k3 = f(N + k2.dN*dt/2, P + k2.dP*dt/2);
+        const k4 = f(N + k3.dN*dt, P + k3.dP*dt);
+        N = Math.max(0, N + (k1.dN + 2*k2.dN + 2*k3.dN + k4.dN) * dt / 6);
+        P = Math.max(0, P + (k1.dP + 2*k2.dP + 2*k3.dP + k4.dP) * dt / 6);
+        if (N > 1e7 || P > 1e7) break;
+        if (i % every === 0) pts.push({ t: +(i * dt).toFixed(2), N, P });
+      }
+      return pts;
+    }
+
+    // ── Reusable LineChart ─────────────────────────────────────────────────────
+    // series: [{label, color, points: [{x, y}]}]
+    // hLines: [{y, color, label}]
+
+    function LineChart({ series, xLabel='', yLabel='', logY=false, height=200, title='', hLines=[] }) {
+      const VW = 500, VH = height;
+      const pad = { t: title ? 22 : 10, r: 12, b: xLabel ? 34 : 22, l: 50 };
+      const iW = VW - pad.l - pad.r, iH = VH - pad.t - pad.b;
+
+      const allPts = series.flatMap(s => s.points.filter(p => isFinite(p.x) && isFinite(p.y) && (!logY || p.y > 0)));
+      if (!allPts.length) return (
+        <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+          <text x={VW/2} y={VH/2} textAnchor="middle" fontSize={11} fill="#94a3b8">No data</text>
+        </svg>
+      );
+
+      const allX = allPts.map(p => p.x), allY = allPts.map(p => p.y);
+      const xMin = Math.min(...allX), xMax = Math.max(...allX);
+      let yLo, yHi;
+      if (logY) {
+        const posY = allY.filter(y => y > 0);
+        yLo = Math.min(...posY); yHi = Math.max(...posY);
+        const lLo = Math.log10(yLo), lHi = Math.log10(yHi);
+        const lp = (lHi - lLo) * 0.06;
+        yLo = 10 ** (lLo - lp); yHi = 10 ** (lHi + lp);
+      } else {
+        yLo = 0; yHi = Math.max(...allY) * 1.08;
+        if (yHi === 0) yHi = 1;
+      }
+
+      const xS = v => ((v - xMin) / (xMax - xMin || 1)) * iW;
+      const yS = logY
+        ? v => v > 0 ? iH - ((Math.log10(v) - Math.log10(yLo)) / (Math.log10(yHi) - Math.log10(yLo))) * iH : iH + 5
+        : v => iH - ((v - yLo) / (yHi - yLo || 1)) * iH;
+
+      const nX = 5;
+      const xTicks = Array.from({ length: nX + 1 }, (_, i) => xMin + (i / nX) * (xMax - xMin));
+
+      let yTicks;
+      if (logY) {
+        const lLo = Math.ceil(Math.log10(Math.max(yLo, 1e-9)));
+        const lHi = Math.floor(Math.log10(yHi));
+        yTicks = Array.from({ length: Math.max(0, lHi - lLo + 1) }, (_, i) => 10 ** (lLo + i));
+      } else {
+        yTicks = Array.from({ length: 5 }, (_, i) => yLo + (i / 4) * (yHi - yLo));
+      }
+
+      const fmtY = v => logY ? fmtN(v) : (v >= 10000 ? fmtN(v) : v.toFixed(v < 1 ? 3 : v < 10 ? 2 : 0));
+      const fmtX = v => v % 1 === 0 ? v.toFixed(0) : v.toFixed(1);
+
+      return (
+        <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+          <g transform={`translate(${pad.l},${pad.t})`}>
+            {title && <text x={iW/2} y={-8} textAnchor="middle" fontSize={10} fill="#374151" fontWeight={600}>{title}</text>}
+            {yTicks.map((v,i) => <line key={i} x1={0} y1={yS(v)} x2={iW} y2={yS(v)} stroke="#f1f5f9" strokeWidth={1} />)}
+            {hLines.map((hl, i) => (
+              <g key={i}>
+                <line x1={0} y1={yS(hl.y)} x2={iW} y2={yS(hl.y)} stroke={hl.color || '#94a3b8'} strokeWidth={1.5} strokeDasharray="5,3" />
+                {hl.label && <text x={2} y={yS(hl.y) - 3} fontSize={8} fill={hl.color || '#94a3b8'}>{hl.label}</text>}
+              </g>
+            ))}
+            {series.map((s, si) => {
+              const pts = s.points
+                .filter(p => isFinite(p.x) && isFinite(p.y) && (!logY || p.y > 0))
+                .map(p => `${xS(p.x).toFixed(1)},${yS(p.y).toFixed(1)}`);
+              return <polyline key={si} points={pts.join(' ')} fill="none" stroke={s.color} strokeWidth={2} opacity={0.9} />;
+            })}
+            <line x1={0} y1={iH} x2={iW} y2={iH} stroke="#94a3b8" strokeWidth={1} />
+            <line x1={0} y1={0} x2={0}  y2={iH} stroke="#94a3b8" strokeWidth={1} />
+            {xTicks.map((v,i) => (
+              <g key={i}>
+                <line x1={xS(v)} y1={iH} x2={xS(v)} y2={iH+4} stroke="#94a3b8" strokeWidth={1} />
+                <text x={xS(v)} y={iH+14} textAnchor="middle" fontSize={9} fill="#94a3b8">{fmtX(v)}</text>
+              </g>
+            ))}
+            {yTicks.map((v,i) => (
+              <g key={i}>
+                <line x1={0} y1={yS(v)} x2={-4} y2={yS(v)} stroke="#94a3b8" strokeWidth={1} />
+                <text x={-6} y={yS(v)+3} textAnchor="end" fontSize={9} fill="#94a3b8">{fmtY(v)}</text>
+              </g>
+            ))}
+            {xLabel && <text x={iW/2} y={iH+28} textAnchor="middle" fontSize={9} fill="#94a3b8">{xLabel}</text>}
+            {yLabel && <text x={-iH/2} y={-38} textAnchor="middle" fontSize={9} fill="#94a3b8" transform="rotate(-90)">{yLabel}</text>}
+            {series.length > 1 && series.map((s, i) => (
+              <g key={i} transform={`translate(${iW - 95}, ${i * 14 + 6})`}>
+                <line x1={0} y1={5} x2={14} y2={5} stroke={s.color} strokeWidth={2} />
+                <text x={18} y={9} fontSize={9} fill="#374151">{s.label}</text>
+              </g>
+            ))}
+          </g>
+        </svg>
+      );
+    }
+
+    // ── BIDE Section ───────────────────────────────────────────────────────────
+
+    function BIDESection() {
+      const [N0, setN0]   = useState(100);
+      const [b,  setB]    = useState(0.30);
+      const [d,  setD]    = useState(0.20);
+      const [I,  setI]    = useState(5);
+      const [E,  setE]    = useState(5);
+      const [yrs, setYrs] = useState(30);
+
+      const data = useMemo(() => simBIDE(N0, b, d, I, E, yrs), [N0, b, d, I, E, yrs]);
+      const last = data[data.length - 1];
+      const r = b - d;
+      const lambda = 1 + r;
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Population Processes: BIDE</h2>
+            <p>All population change flows through four processes: Births, Immigration, Deaths, and Emigration</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="slider-group">
+                <div className="slider-row"><span>Starting population (N₀)</span><span className="slider-value">{N0}</span></div>
+                <input type="range" min={10} max={1000} step={10} value={N0} onChange={e => setN0(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="section-label">Per-capita rates (per individual per year)</div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Birth rate (b)</span><span className="slider-value">{b.toFixed(2)}</span></div>
+                <input type="range" min={0} max={0.8} step={0.01} value={b} onChange={e => setB(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Death rate (d)</span><span className="slider-value">{d.toFixed(2)}</span></div>
+                <input type="range" min={0} max={0.8} step={0.01} value={d} onChange={e => setD(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="section-label">Absolute movers per year</div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Immigration (I)</span><span className="slider-value">{I}</span></div>
+                <input type="range" min={0} max={50} value={I} onChange={e => setI(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Emigration (E)</span><span className="slider-value">{E}</span></div>
+                <input type="range" min={0} max={50} value={E} onChange={e => setE(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Years</span><span className="slider-value">{yrs}</span></div>
+                <input type="range" min={5} max={100} value={yrs} onChange={e => setYrs(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="formula-box">
+                ΔN = B − D + I − E{'\n'}
+                N(t+1) = N(t)·(1 + b − d) + I − E{'\n'}
+                r = b − d = {r.toFixed(3)}  λ = {lambda.toFixed(3)}
+              </div>
+              <div className="stats-grid">
+                <div className="stat-box">
+                  <div className="stat-box-value" style={{ color: r > 0 ? '#16a34a' : r < 0 ? '#dc2626' : '#64748b' }}>{r.toFixed(3)}</div>
+                  <div className="stat-box-label">r (per year)</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{lambda.toFixed(3)}</div>
+                  <div className="stat-box-label">λ (finite rate)</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{fmtN(last.N)}</div>
+                  <div className="stat-box-label">Final N</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{r > 0 ? (Math.log(2)/r).toFixed(1) : '—'}</div>
+                  <div className="stat-box-label">Doubling time</div>
+                </div>
+              </div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <LineChart
+                  series={[{ label: 'N(t)', color: '#16a34a', points: data.map(d => ({ x: d.t, y: d.N })) }]}
+                  xLabel="Year (t)" yLabel="N" height={230}
+                  title={`Population trajectory — r = ${r.toFixed(3)}, λ = ${lambda.toFixed(3)}`}
+                />
+              </div>
+              {last && (
+                <div className="bide-breakdown">
+                  <strong>Year {yrs} breakdown</strong> (from year {yrs-1}):<br />
+                  N({yrs-1}) = {fmtN(data[yrs-1]?.N || 0)}<br />
+                  <span className="bide-pos">+ {fmtN(last.born)} births</span>
+                  {'  '}<span className="bide-neg">− {fmtN(last.died)} deaths</span>
+                  {'  '}<span className="bide-pos">+ {fmtN(last.imm)} immigrants</span>
+                  {'  '}<span className="bide-neg">− {fmtN(last.emi)} emigrants</span><br />
+                  = N({yrs}) = <strong>{fmtN(last.N)}</strong>
+                  {'  '}ΔN = <strong style={{ color: last.N - (data[yrs-1]?.N||0) >= 0 ? '#16a34a' : '#dc2626' }}>
+                    {last.N - (data[yrs-1]?.N||0) >= 0 ? '+' : ''}{fmtN(last.N - (data[yrs-1]?.N||0))}
+                  </strong>
+                </div>
+              )}
+              <div className="info-card">
+                <p>
+                  <strong>r = b − d = {r.toFixed(3)}</strong>: when r &gt; 0 the population grows; when r &lt; 0 it declines; r = 0 means births exactly offset deaths (ignoring migration).
+                  λ = {lambda.toFixed(3)} is the <strong>finite rate of increase</strong> — the ratio N(t+1)/N(t) when migration is zero.
+                  {r > 0 && ` Doubling time = ln(2)/r ≈ ${(Math.log(2)/r).toFixed(1)} years.`}
+                  {' '}Immigration and emigration can sustain a population even when r &lt; 0 (a <em>sink</em> population).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Population Growth Section ──────────────────────────────────────────────
+
+    function GrowthSection() {
+      const [model, setModel] = useState('both');
+      const [r,     setR]     = useState(0.20);
+      const [N0,    setN0]    = useState(50);
+      const [K,     setK]     = useState(1000);
+      const [yrs,   setYrs]   = useState(40);
+
+      const expData = useMemo(() => simExponential(N0, r, yrs), [N0, r, yrs]);
+      const logData = useMemo(() => simLogistic(N0, r, K, yrs),  [N0, r, K, yrs]);
+
+      // dN/dt vs N for logistic
+      const dnDt = useMemo(() => {
+        const Nvals = Array.from({ length: 100 }, (_, i) => (i / 99) * K * 1.2);
+        return Nvals.map(N => ({ x: N, y: r * N * (1 - N / K) }));
+      }, [r, K]);
+
+      const showExp = model === 'exponential' || model === 'both';
+      const showLog = model === 'logistic'    || model === 'both';
+
+      const series = [
+        ...(showExp ? [{ label: 'Exponential', color: '#d97706', points: expData.map(d => ({ x: d.t, y: d.N })) }] : []),
+        ...(showLog ? [{ label: 'Logistic',    color: '#16a34a', points: logData.map(d => ({ x: d.t, y: d.N })) }] : []),
+      ];
+
+      const maxExpN = expData[expData.length - 1]?.N || 0;
+      const doublingTime = r > 0 ? (Math.log(2) / r).toFixed(1) : '—';
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Population Growth Models</h2>
+            <p>Exponential growth assumes unlimited resources; logistic growth adds a ceiling — the carrying capacity K</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="control-group">
+                <label>Model to display</label>
+                <select value={model} onChange={e => setModel(e.target.value)}>
+                  <option value="both">Exponential + Logistic</option>
+                  <option value="exponential">Exponential only</option>
+                  <option value="logistic">Logistic only</option>
+                </select>
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Intrinsic rate r</span><span className="slider-value">{r.toFixed(2)}</span></div>
+                <input type="range" min={0.01} max={1.0} step={0.01} value={r} onChange={e => setR(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Initial N₀</span><span className="slider-value">{N0}</span></div>
+                <input type="range" min={1} max={900} value={N0} onChange={e => setN0(+e.target.value)} />
+              </div>
+              {showLog && (
+                <div className="slider-group">
+                  <div className="slider-row"><span>Carrying capacity K</span><span className="slider-value">{K.toLocaleString()}</span></div>
+                  <input type="range" min={100} max={5000} step={50} value={K} onChange={e => setK(+e.target.value)} />
+                </div>
+              )}
+              <div className="slider-group">
+                <div className="slider-row"><span>Years</span><span className="slider-value">{yrs}</span></div>
+                <input type="range" min={10} max={100} value={yrs} onChange={e => setYrs(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="formula-box">
+                {showExp && `Exp:  N(t) = N₀·eʳᵗ\n`}
+                {showLog && `Log:  dN/dt = rN(1 − N/K)\n`}
+                {showLog && `      N(t) = K / (1 + ((K/N₀)−1)e⁻ʳᵗ)`}
+              </div>
+              <div className="stats-grid">
+                <div className="stat-box">
+                  <div className="stat-box-value">{doublingTime}</div>
+                  <div className="stat-box-label">Doubling time</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value">{(Math.exp(r)).toFixed(3)}</div>
+                  <div className="stat-box-label">λ = eʳ</div>
+                </div>
+                {showLog && <>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{K.toLocaleString()}</div>
+                    <div className="stat-box-label">K (ceiling)</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-box-value">{(K/2).toLocaleString()}</div>
+                    <div className="stat-box-label">K/2 (max growth)</div>
+                  </div>
+                </>}
+              </div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <LineChart series={series} xLabel="Year (t)" yLabel="N" height={220}
+                  title="Population size over time"
+                  hLines={showLog ? [{ y: K, color: '#16a34a', label: `K=${K}` }] : []}
+                />
+              </div>
+              {showLog && (
+                <div className="chart-container">
+                  <LineChart
+                    series={[{ label: 'dN/dt', color: '#16a34a', points: dnDt }]}
+                    xLabel="Population size N" yLabel="dN/dt" height={155}
+                    title="Per-time-step growth rate vs N (parabola peaks at N = K/2)"
+                    hLines={[{ y: 0, color: '#94a3b8' }]}
+                  />
+                </div>
+              )}
+              <div className="info-card">
+                <p>
+                  <strong>Exponential growth</strong> produces a J-shaped curve — population grows faster and faster with no limit.
+                  {showExp && ` After ${yrs} years: N = ${fmtN(maxExpN)}.`}
+                  {showLog && <><br /><strong>Logistic growth</strong> adds density dependence: as N → K, growth slows and the curve becomes S-shaped (sigmoidal).
+                  Growth is fastest at <strong>N = K/2 = {(K/2).toLocaleString()}</strong> — the inflection point of the S-curve — and the population approaches K asymptotically.</>}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Carrying Capacity / Density Dependence ─────────────────────────────────
+
+    function BifurcationCanvas({ K }) {
+      const canvasRef = useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const dpr = window.devicePixelRatio || 1;
+        const W = 500, H = 190;
+        canvas.width  = W * dpr; canvas.height = H * dpr;
+        canvas.style.width  = '100%'; canvas.style.height = H + 'px';
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        ctx.fillStyle = '#fafafa'; ctx.fillRect(0, 0, W, H);
+        const padL=44, padR=10, padT=10, padB=28;
+        const iW = W-padL-padR, iH = H-padT-padB;
+        const nR = 400;
+        ctx.fillStyle = '#16a34a';
+        for (let ri = 0; ri < nR; ri++) {
+          const r = (ri / (nR-1)) * 3.0;
+          let N = K * 0.6;
+          for (let i = 0; i < 300; i++) N = Math.max(0, N + r * N * (1 - N/K));
+          for (let i = 0; i < 80; i++) {
+            N = Math.max(0, N + r * N * (1 - N/K));
+            const px = padL + (r / 3) * iW;
+            const py = padT + (1 - Math.min(N/K, 1.5)) / 1.5 * iH;
+            ctx.fillRect(px, py, 1.2, 1.2);
+          }
+        }
+        // Axes
+        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, padT+iH); ctx.lineTo(padL+iW, padT+iH);
+        ctx.moveTo(padL, padT);    ctx.lineTo(padL, padT+iH);
+        ctx.stroke();
+        // X ticks & label
+        ctx.fillStyle = '#94a3b8'; ctx.font = `${9*dpr/dpr}px sans-serif`; ctx.textAlign='center';
+        for (let i = 0; i <= 3; i++) {
+          const x = padL + (i/3)*iW;
+          ctx.fillText(i.toFixed(0), x, padT+iH+14);
+        }
+        ctx.fillText('r  (discrete growth rate)', padL+iW/2, padT+iH+26);
+        // Y ticks
+        ctx.textAlign='right';
+        ['0','0.5','1.0'].forEach((lbl, i) => {
+          const y = padT + iH - (i/2)*iH;
+          ctx.fillText(lbl, padL-4, y+3);
+        });
+        ctx.save(); ctx.rotate(-Math.PI/2);
+        ctx.textAlign='center'; ctx.fillText('N / K', -(padT+iH/2), padL-32);
+        ctx.restore();
+        // Vertical guide lines for regimes
+        ctx.strokeStyle = '#fca5a5'; ctx.lineWidth = 1; ctx.setLineDash([3,2]);
+        [1.0, 2.0].forEach(rv => {
+          const x = padL + (rv/3)*iW;
+          ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT+iH); ctx.stroke();
+        });
+        ctx.setLineDash([]);
+      }, [K]);
+      return <canvas ref={canvasRef} style={{ display: 'block', borderRadius: 4 }} />;
+    }
+
+    function CarryingCapSection() {
+      const [r,   setR]   = useState(1.5);
+      const [K,   setK]   = useState(500);
+      const [N0,  setN0]  = useState(50);
+      const [yrs, setYrs] = useState(60);
+
+      const data = useMemo(() => simDiscrete(N0, r, K, yrs), [N0, r, K, yrs]);
+      const regime = r < 1 ? 'Stable convergence to K' : r < 2 ? 'Damped oscillations → K' : r < 2.5 ? 'Stable limit cycles' : 'Chaos';
+      const regimeColor = r < 1 ? '#16a34a' : r < 2 ? '#65a30d' : r < 2.5 ? '#d97706' : '#dc2626';
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Carrying Capacity &amp; Density Dependence</h2>
+            <p>K is the population size the environment can sustain. How populations approach K depends critically on r</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="info-card">
+                <p>This section uses the <strong>discrete logistic model</strong>: N(t+1) = N(t) + r·N(t)·(1 − N(t)/K). High r can cause overshooting, oscillations, and even chaos.</p>
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Growth rate r</span><span className="slider-value" style={{ color: regimeColor }}>{r.toFixed(2)}</span></div>
+                <input type="range" min={0.1} max={3.0} step={0.05} value={r} onChange={e => setR(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Carrying capacity K</span><span className="slider-value">{K}</span></div>
+                <input type="range" min={100} max={2000} step={50} value={K} onChange={e => setK(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Initial N₀</span><span className="slider-value">{N0}</span></div>
+                <input type="range" min={1} max={K} value={Math.min(N0, K)} onChange={e => setN0(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Years</span><span className="slider-value">{yrs}</span></div>
+                <input type="range" min={10} max={150} value={yrs} onChange={e => setYrs(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="stat-box" style={{ gridColumn: 'span 2' }}>
+                <div className="stat-box-value" style={{ fontSize: '0.9rem', color: regimeColor }}>{regime}</div>
+                <div className="stat-box-label">Current dynamic regime</div>
+              </div>
+              <div className="formula-box">
+                r &lt; 1:  stable approach{'\n'}
+                1 &lt; r &lt; 2:  damped oscillations{'\n'}
+                2 &lt; r &lt; 2.5: limit cycles{'\n'}
+                r &gt; 2.5: chaos
+              </div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <LineChart
+                  series={[{ label: 'N(t)', color: regimeColor, points: data.map(d => ({ x: d.t, y: d.N })) }]}
+                  xLabel="Year" yLabel="N" height={200}
+                  title={`Discrete logistic — r = ${r.toFixed(2)}, K = ${K}`}
+                  hLines={[{ y: K, color: '#94a3b8', label: `K = ${K}` }, { y: K/2, color: '#d1d5db', label: 'K/2' }]}
+                />
+              </div>
+              <div className="chart-container">
+                <div className="chart-title">Bifurcation diagram — long-run N/K as a function of r (red lines = regime boundaries)</div>
+                <BifurcationCanvas K={K} />
+              </div>
+              <div className="info-card">
+                <p>
+                  <strong>Density dependence</strong>: per-capita growth rate (r·(1−N/K)) declines as N approaches K.
+                  At low r the population smoothly approaches K. As r increases, it overshoots and oscillates.
+                  Above r ≈ 2.5 the population becomes <strong>chaotic</strong> — deterministic but unpredictable. Move the r slider slowly rightward to see the cascade of bifurcations in the diagram below.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Survivorship Section ───────────────────────────────────────────────────
+
+    function SurvivorshipSection() {
+      const [showTypes, setShowTypes] = useState('all');
+      const [maxAge, setMaxAge]       = useState(20);
+      const [logScale, setLogScale]   = useState(true);
+
+      const survData = useMemo(() => computeSurvivorship(maxAge), [maxAge]);
+
+      const colorMap = { I: '#16a34a', II: '#2563eb', III: '#d97706' };
+      const labelMap = { I: 'Type I (humans, large mammals)', II: 'Type II (songbirds, small mammals)', III: 'Type III (fish, invertebrates)' };
+
+      const types = showTypes === 'all' ? ['I', 'II', 'III'] : [showTypes];
+
+      const series = types.map(type => ({
+        label: `Type ${type}`,
+        color: colorMap[type],
+        points: survData.map(row => ({ x: row.x, y: row[type].lx })),
+      }));
+
+      const tableRows = [0, Math.floor(maxAge*0.25), Math.floor(maxAge*0.5), Math.floor(maxAge*0.75), maxAge];
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Survivorship Curves &amp; Life Tables</h2>
+            <p>The three survivorship types reflect fundamentally different patterns of age-specific mortality across taxa</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="control-group">
+                <label>Display type(s)</label>
+                <select value={showTypes} onChange={e => setShowTypes(e.target.value)}>
+                  <option value="all">All three types</option>
+                  <option value="I">Type I only</option>
+                  <option value="II">Type II only</option>
+                  <option value="III">Type III only</option>
+                </select>
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Max age (ω)</span><span className="slider-value">{maxAge}</span></div>
+                <input type="range" min={5} max={40} value={maxAge} onChange={e => setMaxAge(+e.target.value)} />
+              </div>
+              <div className="control-group">
+                <label>Y-axis scale</label>
+                <select value={logScale ? 'log' : 'linear'} onChange={e => setLogScale(e.target.value === 'log')}>
+                  <option value="log">Log (reveals linearity of Type II)</option>
+                  <option value="linear">Linear</option>
+                </select>
+              </div>
+              <div className="divider" />
+              {types.map(t => (
+                <div key={t} className="info-card" style={{ borderColor: colorMap[t], background: '#fafafa' }}>
+                  <p style={{ color: '#374151' }}>
+                    <strong style={{ color: colorMap[t] }}>Type {t}</strong>: {
+                      t === 'I' ? 'Most individuals survive to old age; mortality concentrated late in life. Humans, elephants, large ungulates.' :
+                      t === 'II' ? 'Constant mortality rate at all ages — lₓ declines exponentially and is a straight line on a log scale. Many birds and small mammals.' :
+                      'Very high mortality early in life; survivors have good prospects. Fish, insects, most invertebrates, many plants.'
+                    }
+                  </p>
+                </div>
+              ))}
+              <div className="formula-box">
+                lₓ = prob. surviving to age x{'\n'}
+                dₓ = lₓ − lₓ₊₁  (deaths in interval){'\n'}
+                qₓ = dₓ / lₓ     (mortality rate){'\n'}
+                Type II: qₓ = constant for all x
+              </div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <LineChart
+                  series={series}
+                  xLabel="Age (x)" yLabel={logScale ? 'lₓ (log)' : 'lₓ'}
+                  logY={logScale} height={240}
+                  title={`Survivorship curves${logScale ? ' — log scale (Type II is linear)' : ' — linear scale'}`}
+                />
+              </div>
+              <div className="chart-container">
+                <div className="chart-title">Life table — selected ages</div>
+                <table className="surv-table">
+                  <thead>
+                    <tr>
+                      <th>Age (x)</th>
+                      {types.map(t => <th key={t} style={{ color: colorMap[t] }}>lₓ (Type {t})</th>)}
+                      {types.map(t => <th key={t} style={{ color: colorMap[t] }}>qₓ (Type {t})</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableRows.map(x => {
+                      const row = survData[Math.min(x, survData.length-1)];
+                      return (
+                        <tr key={x}>
+                          <td><strong>{x}</strong></td>
+                          {types.map(t => <td key={t}>{row[t].lx.toFixed(3)}</td>)}
+                          {types.map(t => <td key={t}>{(row[t].qx).toFixed(3)}</td>)}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div className="info-card">
+                <p>
+                  <strong>Log scale</strong> is the ecologist's default for survivorship curves: Type II becomes a straight line (constant slope = constant mortality rate qₓ), making it easy to compare the curvature of Types I and III.
+                  qₓ = dₓ/lₓ is the <strong>age-specific mortality rate</strong> — the probability of dying given you've survived to age x.
+                  Type I species invest heavily in parental care; Type III species produce many offspring and depend on sheer numbers.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Predator-Prey (Lotka-Volterra) ─────────────────────────────────────────
+
+    function PredatorPreySection() {
+      const [N0,    setN0]    = useState(100);
+      const [P0,    setP0]    = useState(20);
+      const [rN,    setRN]    = useState(0.80);
+      const [alpha, setAlpha] = useState(0.010);
+      const [beta,  setBeta]  = useState(0.005);
+      const [delta, setDelta] = useState(0.30);
+      const [tMax,  setTMax]  = useState(80);
+
+      const data = useMemo(() => simLV(N0, P0, rN, alpha, beta, delta, tMax), [N0, P0, rN, alpha, beta, delta, tMax]);
+
+      const Nstar = delta / beta;
+      const Pstar = rN / alpha;
+
+      const NMax = Math.max(...data.map(d => d.N));
+      const PMax = Math.max(...data.map(d => d.P));
+
+      // Phase plane SVG
+      const VW = 440, VH = 230;
+      const padL = 48, padR = 12, padT = 16, padB = 32;
+      const iW = VW - padL - padR, iH = VH - padT - padB;
+      const ppXMax = Math.max(NMax * 1.1, Nstar * 1.5);
+      const ppYMax = Math.max(PMax * 1.1, Pstar * 1.5);
+      const ppX = n => ((n) / ppXMax) * iW;
+      const ppY = p => iH - (p / ppYMax) * iH;
+      const phasePts = data.map(d => `${ppX(d.N).toFixed(1)},${ppY(d.P).toFixed(1)}`).join(' ');
+      const ppXTicks = Array.from({ length: 5 }, (_, i) => (i/4) * ppXMax);
+      const ppYTicks = Array.from({ length: 5 }, (_, i) => (i/4) * ppYMax);
+
+      return (
+        <div className="section-content">
+          <div className="section-header">
+            <h2>Predator-Prey Dynamics</h2>
+            <p>The Lotka-Volterra model produces coupled oscillations — prey and predator populations cycle out of phase</p>
+          </div>
+          <div className="simulator-layout">
+            <div className="controls-panel">
+              <div className="section-label">Initial conditions</div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Prey N₀</span><span className="slider-value">{N0}</span></div>
+                <input type="range" min={5} max={300} value={N0} onChange={e => setN0(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Predators P₀</span><span className="slider-value">{P0}</span></div>
+                <input type="range" min={1} max={100} value={P0} onChange={e => setP0(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="section-label">Parameters</div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Prey growth r</span><span className="slider-value">{rN.toFixed(2)}</span></div>
+                <input type="range" min={0.1} max={2.0} step={0.05} value={rN} onChange={e => setRN(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Predation rate α</span><span className="slider-value">{alpha.toFixed(3)}</span></div>
+                <input type="range" min={0.001} max={0.05} step={0.001} value={alpha} onChange={e => setAlpha(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Predator efficiency β</span><span className="slider-value">{beta.toFixed(3)}</span></div>
+                <input type="range" min={0.001} max={0.02} step={0.001} value={beta} onChange={e => setBeta(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Predator death δ</span><span className="slider-value">{delta.toFixed(2)}</span></div>
+                <input type="range" min={0.05} max={1.0} step={0.05} value={delta} onChange={e => setDelta(+e.target.value)} />
+              </div>
+              <div className="slider-group">
+                <div className="slider-row"><span>Time span</span><span className="slider-value">{tMax}</span></div>
+                <input type="range" min={20} max={200} step={5} value={tMax} onChange={e => setTMax(+e.target.value)} />
+              </div>
+              <div className="divider" />
+              <div className="formula-box">
+                dN/dt = rN − αNP{'\n'}
+                dP/dt = βNP − δP{'\n'}
+                N* = δ/β = {fmtN(Nstar)}{'\n'}
+                P* = r/α = {fmtN(Pstar)}
+              </div>
+              <div className="stats-grid">
+                <div className="stat-box">
+                  <div className="stat-box-value" style={{ color: '#16a34a' }}>{fmtN(Nstar)}</div>
+                  <div className="stat-box-label">Prey equil. N*</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-box-value" style={{ color: '#d97706' }}>{fmtN(Pstar)}</div>
+                  <div className="stat-box-label">Pred. equil. P*</div>
+                </div>
+              </div>
+            </div>
+            <div className="results-panel">
+              <div className="chart-container">
+                <LineChart
+                  series={[
+                    { label: 'Prey (N)',      color: '#16a34a', points: data.map(d => ({ x: d.t, y: d.N })) },
+                    { label: 'Predators (P)', color: '#d97706', points: data.map(d => ({ x: d.t, y: d.P })) },
+                  ]}
+                  xLabel="Time" yLabel="N" height={200}
+                  title="Population dynamics over time — prey leads predator by ~¼ cycle"
+                />
+              </div>
+              <div className="chart-container">
+                <div className="chart-title">Phase plane — each point is (N, P) at one moment; closed loops = sustained oscillations</div>
+                <svg width="100%" viewBox={`0 0 ${VW} ${VH}`} style={{ display: 'block' }}>
+                  <g transform={`translate(${padL},${padT})`}>
+                    {[0.25, 0.5, 0.75, 1].map(f => (
+                      <g key={f}>
+                        <line x1={0} y1={ppY(ppYMax*f)} x2={iW} y2={ppY(ppYMax*f)} stroke="#f1f5f9" strokeWidth={1} />
+                        <line x1={ppX(ppXMax*f)} y1={0} x2={ppX(ppXMax*f)} y2={iH} stroke="#f1f5f9" strokeWidth={1} />
+                      </g>
+                    ))}
+                    {/* Equilibrium point */}
+                    {Nstar < ppXMax && Pstar < ppYMax && <>
+                      <line x1={ppX(Nstar)} y1={0} x2={ppX(Nstar)} y2={iH} stroke="#94a3b8" strokeWidth={1} strokeDasharray="3,2" />
+                      <line x1={0} y1={ppY(Pstar)} x2={iW} y2={ppY(Pstar)} stroke="#94a3b8" strokeWidth={1} strokeDasharray="3,2" />
+                      <circle cx={ppX(Nstar)} cy={ppY(Pstar)} r={4} fill="none" stroke="#475569" strokeWidth={1.5} />
+                      <text x={ppX(Nstar)+5} y={ppY(Pstar)-4} fontSize={8} fill="#475569">(N*,P*)</text>
+                    </>}
+                    {/* Phase trajectory */}
+                    <polyline points={phasePts} fill="none" stroke="#6366f1" strokeWidth={1.5} opacity={0.8} />
+                    {/* Start point */}
+                    <circle cx={ppX(N0)} cy={ppY(P0)} r={4} fill="#16a34a" />
+                    <text x={ppX(N0)+5} y={ppY(P0)-4} fontSize={8} fill="#16a34a">start</text>
+                    {/* Axes */}
+                    <line x1={0} y1={iH} x2={iW} y2={iH} stroke="#94a3b8" strokeWidth={1} />
+                    <line x1={0} y1={0} x2={0}  y2={iH} stroke="#94a3b8" strokeWidth={1} />
+                    {ppXTicks.map((v,i) => (
+                      <g key={i}>
+                        <line x1={ppX(v)} y1={iH} x2={ppX(v)} y2={iH+4} stroke="#94a3b8" strokeWidth={1} />
+                        <text x={ppX(v)} y={iH+14} textAnchor="middle" fontSize={9} fill="#94a3b8">{fmtN(v)}</text>
+                      </g>
+                    ))}
+                    {ppYTicks.map((v,i) => (
+                      <g key={i}>
+                        <line x1={0} y1={ppY(v)} x2={-4} y2={ppY(v)} stroke="#94a3b8" strokeWidth={1} />
+                        <text x={-6} y={ppY(v)+3} textAnchor="end" fontSize={9} fill="#94a3b8">{fmtN(v)}</text>
+                      </g>
+                    ))}
+                    <text x={iW/2} y={iH+28} textAnchor="middle" fontSize={9} fill="#94a3b8">Prey N</text>
+                    <text x={-iH/2} y={-36} textAnchor="middle" fontSize={9} fill="#94a3b8" transform="rotate(-90)">Predators P</text>
+                  </g>
+                </svg>
+              </div>
+              <div className="info-card">
+                <p>
+                  <strong>Prey → predators lag:</strong> prey grow when predators are scarce; predators then increase, suppressing prey; fewer prey causes predator decline; and the cycle repeats.
+                  The <strong>equilibrium (N*, P*)</strong> = ({fmtN(Nstar)}, {fmtN(Pstar)}) — set by the parameter ratios δ/β and r/α — is the center of the closed orbits in the phase plane.
+                  Starting N₀ or P₀ closer to (N*, P*) gives smaller oscillations; further away gives larger ones.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Main App ───────────────────────────────────────────────────────────────
+
+    function PopEcologyApp() {
+      const [activeSection, setActiveSection] = useState('home');
+
+      const navItems = [
+        { id: 'bide',       label: 'BIDE Processes' },
+        { id: 'growth',     label: 'Population Growth' },
+        { id: 'carrying',   label: 'Carrying Capacity' },
+        { id: 'survivorship', label: 'Survivorship' },
+        { id: 'predprey',   label: 'Predator-Prey' },
+      ];
+
+      const renderHome = () => (
+        <div className="home-section">
+          <div className="hero">
+            <h1>Population Ecology</h1>
+            <p className="hero-subtitle">Interactive models of how populations grow, decline, and interact</p>
+            <div className="hero-stats">
+              <div className="stat-item"><div className="stat-number">5</div><div className="stat-label">Topics</div></div>
+              <div className="stat-item"><div className="stat-number">100%</div><div className="stat-label">Interactive</div></div>
+              <div className="stat-item"><div className="stat-number">Free</div><div className="stat-label">Always</div></div>
+            </div>
+          </div>
+          <div className="topics-grid">
+            {[
+              { id: 'bide',         icon: '🌱', title: 'BIDE Processes',      desc: 'All population change arises from four processes: Births, Immigration, Deaths, and Emigration. Explore how each contributes to population growth rate r and finite rate λ.' },
+              { id: 'growth',       icon: '📈', title: 'Population Growth',   desc: 'Compare exponential (J-curve) and logistic (S-curve) growth. Discover the carrying capacity K and why populations slow as they approach it.' },
+              { id: 'carrying',     icon: '⚖️', title: 'Carrying Capacity',   desc: 'Explore density dependence and what happens when r is high: stable equilibrium, damped oscillations, limit cycles, and chaos.' },
+              { id: 'survivorship', icon: '📊', title: 'Survivorship Curves', desc: 'The three survivorship types reveal how mortality is distributed across age classes. Visualize lₓ, dₓ, and qₓ for humans, birds, and fish.' },
+              { id: 'predprey',     icon: '🐺', title: 'Predator-Prey',       desc: 'The Lotka-Volterra model generates coupled oscillations. Watch prey and predator populations cycle and explore the phase plane portrait.' },
+            ].map(t => (
+              <div className="topic-card" key={t.id} onClick={() => setActiveSection(t.id)}>
+                <div className="topic-icon">{t.icon}</div>
+                <h3>{t.title}</h3>
+                <p>{t.desc}</p>
+                <span className="topic-arrow">Explore →</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      const sectionMap = {
+        home:         renderHome,
+        bide:         () => <BIDESection />,
+        growth:       () => <GrowthSection />,
+        carrying:     () => <CarryingCapSection />,
+        survivorship: () => <SurvivorshipSection />,
+        predprey:     () => <PredatorPreySection />,
+      };
+
+      return (
+        <div className="app">
+          <nav className="navbar">
+            <div className="nav-brand" onClick={() => setActiveSection('home')}>
+              <span className="nav-brand-symbol">N</span>
+              <div>
+                <div className="nav-brand-title">PopEcology</div>
+                <div className="nav-brand-subtitle">interactive population ecology</div>
+              </div>
+            </div>
+            <div className="nav-links">
+              {navItems.map(item => (
+                <button key={item.id} className={activeSection === item.id ? 'active' : ''}
+                  onClick={() => setActiveSection(item.id)}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </nav>
+          <main className="main-content">
+            {sectionMap[activeSection]?.()}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<PopEcologyApp />);
+  </script>
+</body>
+</html>
